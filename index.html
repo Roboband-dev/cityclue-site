@@ -3,237 +3,599 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>City Clue — The Las Vegas Strip, played on foot</title>
-    <meta name="description" content="City Clue is an adult walking tour for your phone. Follow clues between real stops on the Las Vegas Strip.">
-    <meta name="theme-color" content="#100e0c">
+    <title>Vegas Strip Scavenger Hunt Game (21+) | City Clue</title>
+    <meta name="description" content="Self-guided Las Vegas Strip walking game for adults. 13 stops, clues &amp; trivia with host Bruce. ~90 min, any time. $14.99, free cancellation.">
+    <meta name="theme-color" content="#1A1128">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="format-detection" content="telephone=no">
     <link rel="canonical" href="https://cityclue.site/">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="City Clue">
-    <meta property="og:title" content="City Clue — The Las Vegas Strip, played on foot">
-    <meta property="og:description" content="An adult walking tour for your phone. Follow clues between real stops on the Las Vegas Strip.">
+    <meta property="og:title" content="Vegas Strip Scavenger Hunt Game (21+) | City Clue">
+    <meta property="og:description" content="Self-guided Las Vegas Strip walking game for adults. 13 stops, clues &amp; trivia with host Bruce. ~90 min, any time. $14.99, free cancellation.">
     <meta property="og:url" content="https://cityclue.site/">
-    <meta property="og:image" content="https://cityclue.site/og.png">
+    <meta property="og:image" content="https://cityclue.site/img/og/og-1200x630.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="City Clue: Discover the Strip, a self-guided Las Vegas Strip game for adults 21+, $14.99 per player">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="City Clue — The Las Vegas Strip, played on foot">
-    <meta name="twitter:description" content="An adult walking tour for your phone. Follow clues between real stops on the Las Vegas Strip.">
-    <meta name="twitter:image" content="https://cityclue.site/og.png">
-    <link rel="preload" href="/assets/fonts/fraunces-roman.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <meta name="twitter:title" content="Vegas Strip Scavenger Hunt Game (21+) | City Clue">
+    <meta name="twitter:description" content="Self-guided Las Vegas Strip walking game for adults. 13 stops, clues &amp; trivia with host Bruce. ~90 min, any time. $14.99, free cancellation.">
+    <meta name="twitter:image" content="https://cityclue.site/img/og/og-1200x630.jpg">
+    <meta name="twitter:image:alt" content="City Clue: Discover the Strip, a self-guided Las Vegas Strip game for adults 21+, $14.99 per player">
+    <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/styles.css">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "City Clue",
-        "url": "https://cityclue.site/",
-        "description": "City Clue is an adult walking tour for your phone. Follow clues between real stops on the Las Vegas Strip."
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://cityclue.site/#org",
+            "name": "City Clue by Rift Studios",
+            "legalName": "Arcade of Satoshi LLC",
+            "url": "https://cityclue.site/",
+            "email": "support@riftstudios.ai",
+            "logo": "https://cityclue.site/favicon.svg"
+          },
+          {
+            "@type": "TouristTrip",
+            "@id": "https://cityclue.site/#trip",
+            "name": "Discover the Strip: Adults Only Vegas Strip Game Tour (21+)",
+            "description": "Self-guided walking game on the Las Vegas Strip with an in-app comedian host, clues, trivia and picture challenges. About 90 minutes, 13 stops, 4.3 km.",
+            "touristType": "Adults 21+",
+            "provider": { "@id": "https://cityclue.site/#org" },
+            "itinerary": {
+              "@type": "ItemList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "item": {
+                    "@type": "TouristAttraction",
+                    "name": "The Cosmopolitan of Las Vegas (start)",
+                    "address": "3708 S Las Vegas Blvd, Las Vegas, NV 89109"
+                  }
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "item": {
+                    "@type": "TouristAttraction",
+                    "name": "Las Vegas Strip pedestrian bridge (finish)"
+                  }
+                }
+              ]
+            },
+            "offers": { "@id": "https://cityclue.site/#offer" }
+          },
+          {
+            "@type": "Product",
+            "@id": "https://cityclue.site/#product",
+            "name": "Adults Only Vegas Strip Game Tour: Casinos, Cocktails & Clues (21+)",
+            "brand": { "@type": "Brand", "name": "City Clue" },
+            "image": ["https://cityclue.site/img/hero/hero-desktop-1440.jpg"],
+            "description": "One player ticket for City Clue's self-guided Discover the Strip walking game. Play any day, no set start time.",
+            "offers": {
+              "@type": "Offer",
+              "@id": "https://cityclue.site/#offer",
+              "price": "14.99",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "url": "https://cityclue.site/#book",
+              "eligibleCustomerType": "Adults 21+",
+              "seller": { "@id": "https://cityclue.site/#org" }
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is it really 21+?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. The tour leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do we have to drink or gamble?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. You'll walk past bars and casinos, but drinks and gambling are optional and not included."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What time does it start?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Whenever you want on the day you book. There's no set start time."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does it take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "About 90 minutes, including games. The walk is about 2.7 miles (4.3 km)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where does it start and end?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Start at The Cosmopolitan's main Strip entrance (3708 S Las Vegas Blvd). Finish on a pedestrian bridge nearby."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can we play as a group?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Play solo or as a team. Each player needs their own ticket."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need to download anything?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No app-store download. It plays in your phone's browser. You'll need data, location services, and a charged battery."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I get my ticket?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "By email, right after booking. Each player gets their own ticket. Check spam if it hasn't arrived after a few minutes."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What's the cancellation policy?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Free cancellation up to 24 hours before your chosen date for a full refund, as long as the ticket hasn't been used. Email support@riftstudios.ai with your booking reference. Marketplace bookings (for example, Viator) follow that marketplace's policy."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if it's really hot?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Go in the morning or evening. Bring water. A couple of stops include short indoor cut-throughs."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is it accessible?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Mostly flat sidewalks and pedestrian bridges with elevators or escalators at major crossings. It has not been certified as wheelchair accessible."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is this a live guided tour?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Bruce is your in-app host, and you go at your own pace."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "I need help with my booking.",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Email support@riftstudios.ai and include your booking reference."
+                }
+              }
+            ]
+          }
+        ]
       }
     </script>
   </head>
-  <body id="top">
+  <body id="top" data-page="home">
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-hunt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/><path d="M10.5 7l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9Z" stroke-width="1.4"/></symbol><symbol id="i-picture" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.75"/><path d="m3.5 17.5 5-5 3.5 3.5 2.5-2.5 6 5"/></symbol><symbol id="i-true-false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="8.5" height="14" rx="2.5"/><rect x="13" y="5" width="8.5" height="14" rx="2.5"/><path d="m4.6 12.2 1.6 1.6 3-3.4"/><path d="m15.4 10 3.6 4M19 10l-3.6 4"/></symbol><symbol id="i-trivia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5Z"/><path d="M10 7.7a2.1 2.1 0 1 1 2.9 1.9c-.6.3-.9.8-.9 1.4v.3"/><path d="M12 13.4h.01" stroke-width="2.2"/></symbol><symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6Z"/><path d="M9 4v14M15 6v14"/></symbol><symbol id="i-points" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.2 2.7 5.5 6 .9-4.35 4.25 1 6L12 17l-5.35 2.85 1-6L3.3 9.6l6-.9Z"/></symbol><symbol id="i-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M9.2 15.5a3 3 0 1 0 .9-2.4"/><path d="M9.6 11.6v1.9h1.9"/></symbol><symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol><symbol id="i-walk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.8"/><path d="m9.5 21 2.5-6.5 2.5 2V21"/><path d="M7.5 11.5 10 8l3.2.4 2 3.1 2.8 1"/><path d="m10 8-.8 5.5 2.8 1"/></symbol><symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.8" r="2.4"/></symbol><symbol id="i-stops" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4.5h11.5l-2 3.5 2 3.5H5"/></symbol><symbol id="i-cocktail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l-8 9Z"/><path d="M12 13v7M8 20.5h8"/><path d="M15.5 4 18 1.8"/></symbol><symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2"/></symbol><symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.5 8.2 6 8.2-6"/></symbol><symbol id="i-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 0 0 4v1.5A1.5 1.5 0 0 0 4.5 19h15a1.5 1.5 0 0 0 1.5-1.5V16a2 2 0 0 1 0-4 2 2 0 0 1 0-4V6.5A1.5 1.5 0 0 0 19.5 5h-15A1.5 1.5 0 0 0 3 6.5Z"/><path d="M14.5 5.5v2M14.5 11v2M14.5 16.5v2"/></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></symbol><symbol id="i-group" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><circle cx="16.5" cy="9" r="2.4"/><path d="M15.5 14.2a4.6 4.6 0 0 1 5 4.3"/></symbol><symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5v4"/></symbol><symbol id="i-hint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.5h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol><symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></symbol><symbol id="i-age-21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M6.1227318359375005 15.036V13.56214697265625L8.350975878906251 12.009804199218749Q8.54417587890625 11.87855146484375 8.696894531249999 11.730432812499998Q8.84961318359375 11.58231416015625 8.95817138671875 11.418555957031248Q9.06672958984375 11.25479775390625 9.127141650390625 11.084906591796875Q9.1875537109375 10.9150154296875 9.1875537109375 10.73101767578125Q9.1875537109375 10.514512207031249 9.0839009765625 10.351060595703125Q8.9802482421875 10.187608984375 8.79287685546875 10.098983740234374Q8.60550546875 10.01035849609375 8.3411626953125 10.01035849609375Q8.04982861328125 10.01035849609375 7.85448359375 10.117999169921873Q7.65913857421875 10.225639843749999 7.553647412109376 10.405959619140624Q7.44815625 10.58627939453125 7.4214771484375 10.804623291015625Q7.3947980468750005 11.0229671875 7.432208984375 11.252347265625L6.0914482421875 11.12231865234375Q6.00251640625 10.406558203125 6.2527582031249995 9.894425244140624Q6.503 9.38229228515625 7.049174755859375 9.108746142578125Q7.59534951171875 8.8352 8.38409677734375 8.8352Q9.08513857421875 8.8352 9.581326513671875 9.049867041015625Q10.077514453125001 9.26453408203125 10.341555126953125 9.67485498046875Q10.60559580078125 10.085175878906249 10.60559580078125 10.65987041015625Q10.60559580078125 11.0800044921875 10.48139580078125 11.419484716796875Q10.35719580078125 11.75896494140625 10.13302216796875 12.035578125Q9.908848535156249 12.31219130859375 9.61230126953125 12.552924267578124Q9.31575400390625 12.7936572265625 8.97105947265625 13.016296777343749L7.75483115234375 13.824654687499999V13.8614546875L10.6871671875 13.8442810546875V15.036Z M11.881320898437501 15.036V10.930365234375H11.07233408203125V9.707978125Q11.44585498046875 9.707978125 11.709281347656251 9.578563818359374Q11.97270771484375 9.44914951171875 12.064094531250001 8.963999999999999H13.30733662109375V15.036Z M15.348487792968752 13.94181318359375V10.08823505859375H16.499112207031253V13.94181318359375ZM14.066624121093753 12.56794951171875V11.454125097656249H17.78097587890625V12.56794951171875Z" fill="currentColor" stroke="none"/></symbol></svg>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="logo" href="/">
-          <img src="/favicon.svg" width="28" height="28" alt="">
-          <span class="logo-word">City Clue</span>
+          <img src="/img/logo/cityclue-logo-light.svg" width="122" height="28" alt="City Clue">
         </a>
-        <a class="button button-primary button-small" href="#join">Join the list</a>
+        <a class="btn-primary btn-header bokunButton" data-cta="header" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book · $14.99</a>
       </div>
     </header>
 
     <main id="main">
+      <!-- Photo hero variant: add class "is-photo" on this section to crop in lifestyle/hero-group. The illustrated hero stays the default. If you switch, remove loading="lazy" from the photo so it can be the LCP image. -->
       <section class="hero" aria-labelledby="hero-title">
-        <div class="wrap hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Las Vegas · First pack</p>
-            <h1 id="hero-title">Play the Strip<span class="h1-line">on foot.</span></h1>
-            <p class="lede">
-              <span class="lede-lead">City Clue is a walking tour for adults on the Las Vegas Strip.</span>
-              Short clues lead you from one real stop to the next. You bring the phone. The street does the rest.
-            </p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#join">Join the list</a>
-              <a class="button button-ghost" href="#how">How it works</a>
-            </div>
+        <div class="hero-media">
+          <picture class="hero-art hero-art-designed">
+            <source media="(min-width:900px)" type="image/webp" srcset="/img/hero/hero-desktop-960.webp 960w, /img/hero/hero-desktop-1440.webp 1440w, /img/hero/hero-desktop-1920.webp 1920w, /img/hero/hero-desktop-2400.webp 2400w" sizes="100vw">
+            <source type="image/webp" srcset="/img/hero/hero-mobile-640.webp 640w, /img/hero/hero-mobile-1080.webp 1080w" sizes="100vw">
+            <img src="/img/hero/hero-mobile-1080.jpg" width="1080" height="1350" fetchpriority="high" decoding="async" alt="Bruce, City Clue's cartoon comedian host, next to a phone showing the game's first stop at The Cosmopolitan, against a glowing Las Vegas dusk sky">
+          </picture>
+          <picture class="hero-art hero-art-photo">
+            <source type="image/webp" srcset="/img/lifestyle/hero-group-480.webp 480w, /img/lifestyle/hero-group-768.webp 768w, /img/lifestyle/hero-group-1080.webp 1080w" sizes="100vw">
+            <img src="/img/lifestyle/hero-group-1280.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Four adults laugh at a phone on a sidewalk at dusk, with neon lights behind them.">
+          </picture>
+        </div>
+        <div class="wrap hero-copy">
+          <p class="eyebrow">Las Vegas Strip · Adults 21+ · Self-guided</p>
+          <h1 id="hero-title">Play the Vegas Strip like a game show.</h1>
+          <p class="lede">Your phone becomes the host. Bruce, our wisecracking Vegas comedian, walks you between landmarks with clues, trivia and picture challenges. Score points and bring your crew. Any day, any time.</p>
+          <ul class="chips">
+            <li class="chip"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>~90 min</li>
+            <li class="chip"><svg class="icon" aria-hidden="true"><use href="#i-walk"></use></svg>~2.7 mi / 4.3 km</li>
+            <li class="chip"><svg class="icon" aria-hidden="true"><use href="#i-stops"></use></svg>13 stops</li>
+            <li class="chip chip-age"><svg class="icon" aria-hidden="true"><use href="#i-age-21"></use></svg>21+</li>
+          </ul>
+          <div class="cta-row">
+            <a class="btn-primary" data-cta="hero" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1"><svg class="icon" aria-hidden="true"><use href="#i-ticket"></use></svg>Book now · $14.99 per player</a>
+            <p class="micro">Free cancellation up to 24h before · Instant email confirmation · Play any day, no set start time</p>
           </div>
-
-          <aside class="clue-card" aria-label="Sample clue card">
-            <div class="clue-card-top">
-              <span>City Clue</span>
-              <span>Strip pack</span>
-            </div>
-            <p class="clue-kicker">Sample clue</p>
-            <p class="clue-text">Keep the boulevard on your left. Walk until the sidewalk opens up, then find the sign that faces the side street.</p>
-            <div class="clue-progress" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span class="is-current"></span>
-              <span></span>
-              <span></span>
-            </div>
-            <p class="clue-note">A few minutes on foot, then the next stop. Not a live route.</p>
-          </aside>
         </div>
       </section>
 
-      <section class="pitch" aria-label="Short pitch">
+      <section class="trust" aria-label="Booking details">
         <div class="wrap">
-          <p>Clues point the way. Stops are real places. The tour is the walk between them.</p>
+          <ul class="trust-row">
+            <li class="trust-item"><svg class="icon" aria-hidden="true"><use href="#i-cancel"></use></svg>Free cancellation (24h)</li>
+            <li class="trust-item"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>Instant confirmation</li>
+            <li class="trust-item"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>Any day, no set time</li>
+            <li class="trust-item"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg>Secure checkout (Stripe)</li>
+            <li class="trust-item"><svg class="icon" aria-hidden="true"><use href="#i-age-21"></use></svg>Adults 21+</li>
+            <li class="trust-item is-insured"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>Insured operator</li>
+          </ul>
         </div>
       </section>
 
-      <section class="how" id="how" aria-labelledby="how-title">
-        <div class="wrap">
-          <p class="eyebrow">What it is</p>
-          <h2 id="how-title">Clues, stops, and the walk between them.</h2>
-          <p class="section-intro">A route you play outside. Three pieces, kept simple.</p>
-          <ol class="route">
-            <li>
-              <span class="route-index" aria-hidden="true">01</span>
-              <h3>Clues</h3>
-              <p>A short prompt for the block you are standing on. It points you to the next stop: a direction, a detail, something you would only catch on foot.</p>
-            </li>
-            <li>
-              <span class="route-index" aria-hidden="true">02</span>
-              <h3>Stops</h3>
-              <p>Real places on the route. You show up, take in the spot, and pick up the next thread. The screen stays light so the street stays in front of you.</p>
-            </li>
-            <li>
-              <span class="route-index" aria-hidden="true">03</span>
-              <h3>Walking tour</h3>
-              <p>A start, a run of stops, and a last clue, paced for a walk you can finish. Built for adults who want a night out with a point to it.</p>
-            </li>
-          </ol>
+      <section class="section section-raise" id="how" aria-labelledby="how-title">
+        <div class="wrap how-layout">
+          <div class="how-intro">
+            <p class="eyebrow">How it works</p>
+            <h2 id="how-title">Self-guided, from the first step.</h2>
+          </div>
+            <ol class="steps">
+              <li class="step">
+                <span class="step-index" aria-hidden="true">1</span>
+                <div>
+                  <h3>Book your players.</h3>
+                  <p>Pick a date and how many people are playing. Checkout takes about a minute.</p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step-index" aria-hidden="true">2</span>
+                <div>
+                  <h3>Get your tickets by email.</h3>
+                  <p>Every player gets a personal ticket the moment you book.</p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step-index" aria-hidden="true">3</span>
+                <div>
+                  <h3>Meet Bruce at The Cosmopolitan.</h3>
+                  <p>Show up whenever you like. Bruce guides you stop to stop on your phone, with a live map, clues and points.</p>
+                </div>
+              </li>
+            </ol>
+          <figure class="life">
+            <picture>
+              <source type="image/webp" srcset="/img/lifestyle/high-five-480.webp 480w, /img/lifestyle/high-five-768.webp 768w, /img/lifestyle/high-five-1080.webp 1080w" sizes="(min-width: 900px) 420px, 100vw">
+              <img src="/img/lifestyle/high-five-1280.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Two adults high-five on a city sidewalk at night, one holding a phone, with neon lights behind them.">
+            </picture>
+          </figure>
         </div>
-      </section>
-
-      <section class="vegas" id="vegas" aria-labelledby="vegas-title">
         <div class="wrap">
-          <div class="vegas-panel">
-            <div>
-              <p class="eyebrow">Vegas first</p>
-              <h2 id="vegas-title">The Strip pack opens before any other city.</h2>
-              <p class="section-intro">Las Vegas comes first. The Strip pack is a night walk you play clue by clue, on the sidewalk, from one real stop to the next. Other cities can wait.</p>
-              <ul class="points">
-                <li>Play it on your phone, at your own pace</li>
-                <li>Written for adults</li>
-                <li>Long enough for an evening, short enough to finish</li>
-                <li>Independent of any casino, resort, or the City of Las Vegas</li>
-              </ul>
-            </div>
-            <figure class="skyline">
-              <svg viewBox="0 0 560 300" aria-hidden="true">
-                <defs>
-                  <radialGradient id="glow" cx="62%" cy="28%" r="55%">
-                    <stop offset="0%" stop-color="#e0b15a" stop-opacity="0.2"/>
-                    <stop offset="70%" stop-color="#e0b15a" stop-opacity="0"/>
-                  </radialGradient>
-                </defs>
-                <rect width="560" height="300" fill="url(#glow)"/>
-                <g fill="#f6f0e6">
-                  <circle cx="48" cy="42" r="1.2" opacity="0.55"/>
-                  <circle cx="110" cy="30" r="1.1" opacity="0.4"/>
-                  <circle cx="168" cy="54" r="1.2" opacity="0.35"/>
-                  <circle cx="430" cy="36" r="1.3" opacity="0.5"/>
-                  <circle cx="492" cy="58" r="1.1" opacity="0.4"/>
-                  <circle cx="520" cy="28" r="1.2" opacity="0.45"/>
-                </g>
-                <g fill="#2a241e" stroke="rgba(246,240,230,0.45)" stroke-width="1.4">
-                  <rect x="36" y="168" width="44" height="80" rx="1"/>
-                  <rect x="88" y="112" width="56" height="136" rx="1"/>
-                  <rect x="152" y="150" width="30" height="98" rx="1"/>
-                  <rect x="190" y="58" width="72" height="190" rx="1"/>
-                  <rect x="270" y="128" width="48" height="120" rx="1"/>
-                  <rect x="326" y="90" width="64" height="158" rx="1"/>
-                  <rect x="398" y="156" width="34" height="92" rx="1"/>
-                  <rect x="440" y="118" width="80" height="130" rx="1"/>
-                </g>
-                <g fill="#e0b15a">
-                  <rect x="206" y="82" width="8" height="6"/>
-                  <rect x="226" y="82" width="8" height="6"/>
-                  <rect x="206" y="102" width="8" height="6"/>
-                  <rect x="246" y="118" width="8" height="6"/>
-                  <rect x="108" y="140" width="7" height="5" opacity="0.8"/>
-                  <rect x="348" y="118" width="7" height="5"/>
-                  <rect x="368" y="146" width="7" height="5" opacity="0.75"/>
-                  <rect x="462" y="150" width="8" height="5" opacity="0.85"/>
-                </g>
-                <rect x="216" y="148" width="8" height="6" fill="#ff6a45"/>
-                <path d="M28 258h504" fill="none" stroke="#e0b15a" stroke-width="1.5"/>
-                <g fill="#f6f0e6">
-                  <circle cx="78" cy="258" r="3"/>
-                  <circle cx="176" cy="258" r="3"/>
-                  <circle cx="268" cy="258" r="3"/>
-                  <circle cx="456" cy="258" r="3"/>
-                </g>
-                <circle cx="360" cy="258" r="6.5" fill="none" stroke="#ff6a45" stroke-width="1.5"/>
-                <circle cx="360" cy="258" r="2.6" fill="#ff6a45"/>
-              </svg>
-              <figcaption>Las Vegas Strip · first pack</figcaption>
+          <div class="how-phones">
+            <figure>
+              <img class="phone-shot" src="/img/mockup/phone-1-stop-cosmopolitan-480.webp" srcset="/img/mockup/phone-1-stop-cosmopolitan-320.webp 320w, /img/mockup/phone-1-stop-cosmopolitan-480.webp 480w, /img/mockup/phone-1-stop-cosmopolitan-640.webp 640w" sizes="(min-width: 900px) 260px, 220px" width="320" height="644" loading="lazy" decoding="async" alt="A phone showing City Clue's first stop at The Cosmopolitan. One activity title is blurred so the clue stays hidden.">
+            </figure>
+            <figure>
+              <img class="phone-shot" src="/img/mockup/phone-5-route-map-480.webp" srcset="/img/mockup/phone-5-route-map-320.webp 320w, /img/mockup/phone-5-route-map-480.webp 480w, /img/mockup/phone-5-route-map-640.webp 640w" sizes="(min-width: 900px) 260px, 220px" width="320" height="644" loading="lazy" decoding="async" alt="A phone showing a map between stops. The next stop name is blurred.">
+              <figcaption>A live map guides you stop to stop</figcaption>
             </figure>
           </div>
         </div>
       </section>
 
-      <section class="join" id="join" aria-labelledby="join-title">
-        <div class="wrap join-grid">
-          <div>
-            <p class="eyebrow">The list</p>
-            <h2 id="join-title">Be first when the Strip pack opens.</h2>
-            <p class="section-intro">Leave your email. One note when the first route is ready to play.</p>
+      <section class="section" id="play" aria-labelledby="play-title">
+        <div class="wrap">
+          <p class="eyebrow">What you'll do</p>
+          <h2 id="play-title">What you'll do on the Las Vegas Strip.</h2>
+          <p class="section-intro">Thirteen stops along the Strip's most famous stretch. Each one gets a little story, a few laughs, and a challenge worth points.</p>
+          <ul class="cards">
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-hunt"></use></svg></div>
+              <h3>Hunt for details.</h3>
+              <p>Look for things hiding in plain sight that most people walk right past.</p>
+            </li>
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-picture"></use></svg></div>
+              <h3>Match the picture.</h3>
+              <p>Find the spot in Bruce's photo and prove you were there.</p>
+            </li>
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-true-false"></use></svg></div>
+              <h3>True or false?</h3>
+              <p>Vegas legends, mob lore and celebrity gossip. Guess which ones are real.</p>
+            </li>
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-trivia"></use></svg></div>
+              <h3>Odd one out and rapid trivia.</h3>
+              <p>Quick rounds that sort the locals from the tourists.</p>
+            </li>
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg></div>
+              <h3>Stories between stops.</h3>
+              <p>History, strange facts and big numbers you can use to impress someone at the bar later.</p>
+            </li>
+            <li class="card">
+              <div class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-points"></use></svg></div>
+              <h3>Score and stuck-help.</h3>
+              <p>Points for every answer. Hints are there if you need them, but they cost you.</p>
+            </li>
+          </ul>
+          <ul class="phones">
+            <li>
+              <img src="/img/mockup/phone-2-picture-match-nospoiler-480.webp" srcset="/img/mockup/phone-2-picture-match-nospoiler-320.webp 320w, /img/mockup/phone-2-picture-match-nospoiler-480.webp 480w, /img/mockup/phone-2-picture-match-nospoiler-640.webp 640w" sizes="(min-width: 900px) 240px, 200px" width="320" height="644" loading="lazy" decoding="async" alt="A phone showing a picture-match challenge. The prompt and both photos are blurred.">
+              <p>Match the picture</p>
+            </li>
+            <li>
+              <img src="/img/mockup/phone-3-true-or-false-nospoiler-480.webp" srcset="/img/mockup/phone-3-true-or-false-nospoiler-320.webp 320w, /img/mockup/phone-3-true-or-false-nospoiler-480.webp 480w, /img/mockup/phone-3-true-or-false-nospoiler-640.webp 640w" sizes="(min-width: 900px) 240px, 200px" width="320" height="644" loading="lazy" decoding="async" alt="A phone showing a true-or-false question. The statement is blurred.">
+              <p>True or false?</p>
+            </li>
+            <li>
+              <img src="/img/mockup/phone-4-flag-hunt-nospoiler-480.webp" srcset="/img/mockup/phone-4-flag-hunt-nospoiler-320.webp 320w, /img/mockup/phone-4-flag-hunt-nospoiler-480.webp 480w, /img/mockup/phone-4-flag-hunt-nospoiler-640.webp 640w" sizes="(min-width: 900px) 240px, 200px" width="320" height="644" loading="lazy" decoding="async" alt="A phone showing a hunt-for-details challenge. The title and prompt are blurred.">
+              <p>Hunt for details</p>
+            </li>
+          </ul>
+          <ul class="landmarks">
+            <li><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>The Cosmopolitan</li>
+            <li>Paris Las Vegas &amp; the Eiffel Tower</li>
+            <li>Grand Bazaar Shops</li>
+            <li>Caesars Palace area</li>
+            <li>the former Mirage site (future Hard Rock)</li>
+            <li>The Venetian</li>
+            <li>The LINQ Promenade</li>
+            <li>High Roller</li>
+            <li>Flamingo</li>
+            <li>and more</li>
+          </ul>
+          <p class="note-line">No casino entry, show tickets or gambling required. Drinks are optional and never included.</p>
+          <div class="cta-row">
+            <a class="btn-primary bokunButton" data-cta="features" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book now · $14.99 per player</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-raise" id="route" aria-labelledby="route-title">
+        <div class="wrap">
+          <p class="eyebrow">Route &amp; logistics</p>
+          <h2 id="route-title">Start at The Cosmopolitan. Finish in sight of it.</h2>
+          <div class="route-grid">
+            <figure class="route-card">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1000" width="720" height="1000" role="img" aria-labelledby="rt"><title id="rt">Illustrated route along the Las Vegas Strip: start at The Cosmopolitan, pass landmarks including Paris Las Vegas, Caesars Palace area, The LINQ and The Venetian, finish on a pedestrian bridge nearby</title><defs><linearGradient id="bgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A1840"/><stop offset="1" stop-color="#1A1128"/></linearGradient><linearGradient id="pg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F7AE72"/><stop offset="1" stop-color="#D45A72"/></linearGradient><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs><rect width="720" height="1000" rx="28" fill="url(#bgg)"/><path d="M330,60 V960" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="56" stroke-linecap="round"/><text x="330" y="88" text-anchor="middle" font-family="Outfit, 'Avenir Next', sans-serif" font-size="13" font-weight="600" letter-spacing="3" fill="#FFFFFF" fill-opacity=".45">LAS VEGAS BLVD</text><path d="M319,868 V146 Q319,134 330,134 Q341,134 341,146 V888 M341,405 H557" stroke="#D45A72" stroke-opacity=".35" stroke-width="10" fill="none" filter="url(#glow)"/><path d="M319,868 V146 Q319,134 330,134 Q341,134 341,146 V888 M341,405 H557" stroke="url(#pg)" stroke-width="5" stroke-dasharray="2 11" stroke-linecap="round" fill="none"/><circle cx="330" cy="150" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M327,158 V146 L330,141 L333,146 V158 M327,149 H333" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="364" y="157" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">The Venetian</text><circle cx="330" cy="265" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M326,273 V257 M323,259 H338 M336,259 V265" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="296" y="263" text-anchor="end" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">Former Mirage site</text><text x="296" y="285" text-anchor="end" font-family="Outfit, 'Avenir Next', sans-serif" font-size="16" fill="#FFFFFF" fill-opacity=".72">(future Hard Rock)</text><circle cx="330" cy="372" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M330,380 V369 M326,369 H334 L333,364 H327 Z" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="364" y="379" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">The LINQ Promenade</text><circle cx="330" cy="470" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M330,478 Q331,470 330,466 M330,466 Q325,462 322,468 M330,466 Q335,462 338,468 M330,466 Q329,461 326,460 M330,466 Q332,461 335,460" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="364" y="477" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">Flamingo</text><circle cx="330" cy="545" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M323,539 H337 M323,552 H337 M326,539 V552 M330,539 V552 M334,539 V552" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="296" y="552" text-anchor="end" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">Caesars Palace area</text><circle cx="330" cy="625" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M324,622 H336 L335,633 H325 Z M327,622 V620 a3,3 0 0 1 6,0 V622" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="364" y="632" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">Grand Bazaar Shops</text><circle cx="330" cy="715" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><path d="M324,723 L330,706 L336,723 M326.5,716 H333.5" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="364" y="713" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">Paris Las Vegas</text><text x="364" y="735" text-anchor="start" font-family="Outfit, 'Avenir Next', sans-serif" font-size="16" fill="#FFFFFF" fill-opacity=".72">&amp; the Eiffel Tower</text><circle cx="575" cy="405" r="16" fill="#FDEADE" stroke="#1A1128" stroke-width="3"/><circle cx="575" cy="404" r="7" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M575,397 V411 M568,404 H582 M570,413 L575,411 L580,413" stroke="#1A1128" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="575" y="447" text-anchor="middle" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="600" font-size="20" fill="#FFFFFF">High Roller</text><path d="M303.43,845.76 A17.00,17.00 0 1 1 332.57,845.76 L318.00,870.00 Z" fill="#F7AE72" stroke="#1A1128" stroke-width="3"/><circle cx="318.0" cy="837.0" r="6.8" fill="#1A1128"/><path d="M327.43,865.76 A17.00,17.00 0 1 1 356.57,865.76 L342.00,890.00 Z" fill="#E9BC6E" stroke="#1A1128" stroke-width="3"/><circle cx="342.0" cy="857.0" r="6.8" fill="#1A1128"/><text x="284" y="846" text-anchor="end" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="700" font-size="14" letter-spacing="2.5" fill="#F7AE72">START</text><text x="284" y="872" text-anchor="end" font-family="'Bricolage Grotesque', Outfit, sans-serif" font-weight="700" font-size="24" fill="#FFFFFF">The Cosmopolitan</text><text x="376" y="868" font-family="Outfit, 'Avenir Next', sans-serif" font-weight="700" font-size="14" letter-spacing="2.5" fill="#E9BC6E">FINISH</text><text x="376" y="894" font-family="'Bricolage Grotesque', Outfit, sans-serif" font-weight="700" font-size="24" fill="#FFFFFF">Pedestrian bridge nearby</text><g transform="translate(650,84)"><circle r="24" fill="none" stroke="#FFFFFF" stroke-opacity=".3" stroke-width="2"/><path d="M0,-14 L7,6 L0,2 L-7,6 Z" fill="#FDEADE"/><text y="46" text-anchor="middle" font-family="Outfit, 'Avenir Next', sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" fill-opacity=".6">N</text></g><text x="360.0" y="970" text-anchor="middle" font-family="Outfit, 'Avenir Next', sans-serif" font-size="16" fill="#FFFFFF" fill-opacity=".62">~4.3 km / 2.7 mi · ~90 min with games · Illustration, not to scale</text></svg>
+              <figcaption class="figure-caption">A sketch of the walk. Not a live map.</figcaption>
+            </figure>
+            <div class="route-copy">
+              <figure class="life">
+                <picture>
+                  <source type="image/webp" srcset="/img/lifestyle/couple-bridge-480.webp 480w, /img/lifestyle/couple-bridge-768.webp 768w, /img/lifestyle/couple-bridge-1080.webp 1080w" sizes="(min-width: 900px) 640px, 100vw">
+                  <img src="/img/lifestyle/couple-bridge-1280.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="An adult couple walks across a pedestrian bridge above a lit boulevard at dusk.">
+                </picture>
+                <figcaption>Pedestrian bridges cross the boulevard. The game finishes on one nearby.</figcaption>
+              </figure>
+              <dl class="facts">
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                  <dt>Start</dt>
+                  <dd>Outside The Cosmopolitan, 3708 S Las Vegas Blvd (main Strip entrance, outdoors).</dd>
+                </div>
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-stops"></use></svg>
+                  <dt>Finish</dt>
+                  <dd>A pedestrian bridge near the start. The Cosmopolitan is in sight when you finish.</dd>
+                </div>
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-walk"></use></svg>
+                  <dt>Length</dt>
+                  <dd>About 4.3 km / 2.7 mi of easy sidewalk walking. Plan about 90 minutes with games.</dd>
+                </div>
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>
+                  <dt>When</dt>
+                  <dd>Any day, any time. Mornings and evenings are coolest in summer. The Strip at night is very on-theme.</dd>
+                </div>
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>
+                  <dt>Bring</dt>
+                  <dd>A charged phone with data and location services, comfortable shoes, water. ID is a good idea.</dd>
+                </div>
+                <div class="fact">
+                  <svg class="icon" aria-hidden="true"><use href="#i-group"></use></svg>
+                  <dt>Group play</dt>
+                  <dd>Solo or as a team. Each player needs their own ticket.</dd>
+                </div>
+              </dl>
+              <a class="btn-secondary" data-track="maps_click" href="https://www.google.com/maps/search/?api=1&amp;query=The%20Cosmopolitan%20of%20Las%20Vegas%2C%203708%20S%20Las%20Vegas%20Blvd%2C%20Las%20Vegas%2C%20NV%2089109" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg>Open in Maps</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section price" id="book" aria-labelledby="price-title">
+        <div class="wrap price-grid">
+          <div class="price-copy">
+            <p class="eyebrow">Price</p>
+            <h2 id="price-title">$14.99 per player. That's the whole night's game.</h2>
+            <p class="price-amount">$14.99 <span class="price-unit">per player</span></p>
+            <ul class="points">
+              <li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>About $1.15 a stop, with 13 stops of stories, games and laughs</span></li>
+              <li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>No guide schedule. Start any day, at any time, and go at your pace.</span></li>
+              <li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>A ready-made plan for a group night, bachelor/ette weekend, date or solo wander</span></li>
+              <li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Free cancellation up to 24 hours before your chosen date</span></li>
+            </ul>
+            <figure class="life">
+              <picture>
+                <source type="image/webp" srcset="/img/lifestyle/phone-closeup-480.webp 480w, /img/lifestyle/phone-closeup-768.webp 768w, /img/lifestyle/phone-closeup-1080.webp 1080w" sizes="(min-width: 900px) 460px, 100vw">
+                <img src="/img/lifestyle/phone-closeup-1280.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="A hand holds a phone at night. The screen shows a cartoon host on a purple game, with neon lights behind.">
+              </picture>
+            </figure>
           </div>
           <div>
-            <!-- Set data-endpoint to a URL that accepts POST JSON {"email":"..."} once a list is connected. Empty keeps the address in localStorage only. -->
-            <form id="waitlist-form" data-endpoint="" action="#" method="post" novalidate>
-              <label for="email">Email</label>
-              <div class="form-row">
-                <input id="email" name="email" type="email" inputmode="email" autocomplete="email" enterkeyhint="send" maxlength="254" required placeholder="you@email.com" aria-describedby="email-help email-error">
-                <button class="button button-primary" type="submit">Join the list</button>
-                <p id="email-help" class="form-help">Your address stays in this browser. It is not sent anywhere yet.</p>
-                <p id="email-error" class="form-error" hidden>Enter a valid email address.</p>
+            <div class="book-panel" role="region" aria-label="Choose a date and book">
+              <div class="bokunWidget" data-src="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">
+                <noscript>Please enable JavaScript in your browser to book. You can also open the secure checkout at <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696">widgets.bokun.io</a>.</noscript>
               </div>
-            </form>
-            <div id="waitlist-success" class="success" hidden>
-              <h3 id="success-title" tabindex="-1">Saved on this phone</h3>
-              <p id="saved-email" class="success-email"></p>
-              <p id="success-body">This address stays in this browser. It has not been sent. When the Strip list is live, enter it again to join.</p>
-              <button id="waitlist-reset" class="text-button" type="button">Use a different email</button>
             </div>
-            <noscript>
-              <p class="form-help">The list preview on this page needs JavaScript. Nothing is sent to a server.</p>
-            </noscript>
-            <p class="fine">Wear shoes you can walk in. City Clue is an independent tour, and it is not affiliated with any resort, casino, or the City of Las Vegas.</p>
+            <p class="book-fallback" id="book-fallback" hidden><svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg><span>The calendar did not load. <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696" target="_blank" rel="noopener">Book on the secure checkout</a>.</span></p>
+            <p class="book-help"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>Questions before you book? <a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a></span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reviews-note" aria-labelledby="note-title">
+        <img src="/img/bruce/bruce-mic-400.webp" width="400" height="489" loading="lazy" decoding="async" alt="Bruce, City Clue's cartoon comedian host, holding a microphone.">
+        <div>
+          <h2 id="note-title">Brand new on the Strip.</h2>
+          <p>Be one of the first players. Made by people who love Vegas.</p>
+        </div>
+      </section>
+
+      <section id="reviews" hidden>
+        <!-- REVIEWS PLACEHOLDER: hidden until real, verifiable reviews exist.
+             Source only from real Bokun/Viator/Google reviews with permission.
+             No star averages, counts or "loved by X players" until real numbers exist. -->
+      </section>
+
+      <section class="section section-raise" id="faq" aria-labelledby="faq-title">
+        <div class="wrap">
+          <h2 id="faq-title">Before you book.</h2>
+          <div class="faq-list">
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-1" aria-expanded="false" aria-controls="faq-panel-1"><span>Is it really 21+?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-1" role="region" aria-labelledby="faq-button-1" hidden><p>Yes. The tour leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-2" aria-expanded="false" aria-controls="faq-panel-2"><span>Do we have to drink or gamble?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-2" role="region" aria-labelledby="faq-button-2" hidden><p>No. You'll walk past bars and casinos, but drinks and gambling are optional and not included.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-3" aria-expanded="false" aria-controls="faq-panel-3"><span>What time does it start?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-3" role="region" aria-labelledby="faq-button-3" hidden><p>Whenever you want on the day you book. There's no set start time.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-4" aria-expanded="false" aria-controls="faq-panel-4"><span>How long does it take?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-4" role="region" aria-labelledby="faq-button-4" hidden><p>About 90 minutes, including games. The walk is about 2.7 miles (4.3 km).</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-5" aria-expanded="false" aria-controls="faq-panel-5"><span>Where does it start and end?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-5" role="region" aria-labelledby="faq-button-5" hidden><p>Start at The Cosmopolitan's main Strip entrance (3708 S Las Vegas Blvd). Finish on a pedestrian bridge nearby.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-6" aria-expanded="false" aria-controls="faq-panel-6"><span>Can we play as a group?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-6" role="region" aria-labelledby="faq-button-6" hidden><p>Yes. Play solo or as a team. Each player needs their own ticket.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-7" aria-expanded="false" aria-controls="faq-panel-7"><span>Do I need to download anything?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-7" role="region" aria-labelledby="faq-button-7" hidden><p>No app-store download. It plays in your phone's browser. You'll need data, location services, and a charged battery.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-8" aria-expanded="false" aria-controls="faq-panel-8"><span>How do I get my ticket?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-8" role="region" aria-labelledby="faq-button-8" hidden><p>By email, right after booking. Each player gets their own ticket. Check spam if it hasn't arrived after a few minutes.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-9" aria-expanded="false" aria-controls="faq-panel-9"><span>What's the cancellation policy?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-9" role="region" aria-labelledby="faq-button-9" hidden>
+                <p>Free cancellation up to 24 hours before your chosen date for a full refund, as long as the ticket hasn't been used. Email support@riftstudios.ai with your booking reference. Marketplace bookings (for example, Viator) follow that marketplace's policy.</p>
+                <p><a href="/cancellation">Read the cancellation policy</a></p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-10" aria-expanded="false" aria-controls="faq-panel-10"><span>What if it's really hot?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-10" role="region" aria-labelledby="faq-button-10" hidden><p>Go in the morning or evening. Bring water. A couple of stops include short indoor cut-throughs.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-11" aria-expanded="false" aria-controls="faq-panel-11"><span>Is it accessible?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-11" role="region" aria-labelledby="faq-button-11" hidden><p>Mostly flat sidewalks and pedestrian bridges with elevators or escalators at major crossings. It has not been certified as wheelchair accessible.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-12" aria-expanded="false" aria-controls="faq-panel-12"><span>Is this a live guided tour?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-12" role="region" aria-labelledby="faq-button-12" hidden><p>No. Bruce is your in-app host, and you go at your own pace.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="faq-button-13" aria-expanded="false" aria-controls="faq-panel-13"><span>I need help with my booking.</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="faq-panel-13" role="region" aria-labelledby="faq-button-13" hidden><p>Email <a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a> and include your booking reference.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="final" aria-labelledby="final-title">
+        <div class="final-bg" aria-hidden="true">
+          <picture>
+            <source type="image/webp" srcset="/img/cta/cta-band-bg-800.webp 800w, /img/cta/cta-band-bg-1600.webp 1600w" sizes="100vw">
+            <img src="/img/cta/cta-band-bg-1600.jpg" width="1600" height="720" alt="" loading="lazy" decoding="async">
+          </picture>
+        </div>
+        <div class="wrap final-grid">
+          <picture>
+            <source type="image/webp" srcset="/img/bruce/bruce-mic-400.webp 400w, /img/bruce/bruce-mic-800.webp 800w, /img/bruce/bruce-mic-1200.webp 1200w" sizes="(min-width: 900px) 420px, 260px">
+            <img class="final-bruce" src="/img/bruce/bruce-mic-800.webp" width="800" height="977" loading="lazy" decoding="async" alt="Bruce, City Clue's cartoon comedian host, holding a microphone.">
+          </picture>
+          <div>
+            <p class="bubble"><span class="bubble-label"><svg class="icon" aria-hidden="true"><use href="#i-mic"></use></svg>BRUCE</span>Hey there, welcome to Las Vegas!</p>
+            <h2 id="final-title">Bruce is waiting at the Cosmo.</h2>
+            <p class="lede">13 stops, 90 minutes, one very judgmental comedian. Grab your crew.</p>
+            <div class="cta-row">
+              <a class="btn-primary bokunButton" data-cta="final" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book now · $14.99 per player</a>
+              <p class="micro">Free cancellation up to 24h before · 21+</p>
+            </div>
           </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="wrap footer-grid">
-        <div>
-          <a class="logo" href="/">
-            <img src="/favicon.svg" width="28" height="28" alt="">
-            <span class="logo-word">City Clue</span>
-          </a>
-          <p class="footer-blurb">Adult walking tours, starting on the Las Vegas Strip.</p>
+      <div class="wrap">
+        <div class="footer-brand">
+          <img class="logo-footer" src="/img/logo/cityclue-logo-light.svg" width="105" height="24" alt="City Clue">
+          <span class="by">a game by</span>
+          <img class="rift" src="/img/logo/riftstudios-horizontal-white.svg" width="50" height="20" alt="Rift Studios">
         </div>
         <nav class="footer-nav" aria-label="Footer">
-          <a href="#how">How it works</a>
-          <a href="#vegas">Vegas pack</a>
-          <a href="#join">Waitlist</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/cancellation">Cancellation</a>
+          <a href="/support">Support</a>
         </nav>
-      </div>
-      <div class="wrap footer-meta">
-        <p>© 2026 City Clue</p>
-        <p><a href="https://cityclue.site/">cityclue.site</a></p>
+        <p class="footer-email"><a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a></p>
+        <p class="footer-company">City Clue is a Rift Studios game, a DBA of Arcade of Satoshi LLC.</p>
+        <p class="footer-disclaimer">City Clue is an independent game and is not affiliated with, endorsed by, or sponsored by any resort, casino, restaurant or the City of Las Vegas. Landmark names are used for directions only. Please obey traffic signals and stay aware of your surroundings.</p>
+        <p class="footer-copy">© 2026 City Clue</p>
       </div>
     </footer>
-    <script src="/main.js"></script>
+
+    <div class="bookbar" inert>
+      <p class="bookbar-price">
+        <span class="bookbar-amount">$14.99 / player</span>
+        <span class="bookbar-note">Free cancellation</span>
+      </p>
+      <a class="btn-primary bokunButton" data-cta="sticky" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book now</a>
+    </div>
+    <script src="/main.js" defer></script>
   </body>
 </html>

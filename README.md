@@ -2,7 +2,9 @@
 
 Landing page for [cityclue.site](https://cityclue.site).
 
-City Clue is an adult gamified walking tour. The first pack is the Las Vegas Strip. This repository is the static marketing site: one page, no framework, no build step, and no secrets.
+City Clue is a self-guided walking game for adults 21+ on the Las Vegas Strip, made by Rift Studios (a DBA of Arcade of Satoshi LLC). The brand name is two words. The domain stays `cityclue.site`. This repository is the static marketing site: HTML, CSS and JS, no framework, no build step, and no secrets.
+
+Bookings run through the Bokun widget for experience #1326696 ($14.99 per player, Stripe, USD). The inline calendar sits in the price section. Book buttons open the Bokun checkout. On desktop (900px and up) the hero button smooth-scrolls to `#book` instead.
 
 ## Deploy on Cloudflare Pages
 
@@ -39,20 +41,30 @@ Details: [Custom domains](https://developers.cloudflare.com/pages/configuration/
 
 Pull requests get preview URLs after the project is connected. Production updates when `main` changes.
 
-## Waitlist
+## Pages
 
-The join form is a placeholder. It checks the address and stores `{ "email", "mode" }` in `localStorage` under `cityclue-waitlist`. Nothing is sent to a server, and the page says so.
+| Path | Purpose |
+| --- | --- |
+| `/` | Landing page and booking |
+| `/terms` | Terms of sale and assumption of risk |
+| `/privacy` | Privacy, including Bokun and Stripe |
+| `/cancellation` | 24-hour cancellation policy |
+| `/support` | support@riftstudios.ai |
+| `/thanks` | Post-purchase note. Point Bokun's redirect here if the channel supports one. `noindex`. |
 
-To connect a real list, set `data-endpoint` on `#waitlist-form` in `index.html` to a URL that accepts:
+## Booking widget
 
-```http
-POST /your-list
-Content-Type: application/json
+`main.js` loads `BokunWidgetsLoader.js` after first paint (or sooner, if someone reaches a Book button or the price section). The channel is `7cbce2f5-33c8-4d4b-92b2-bec34c99555c`.
 
-{"email":"person@example.com"}
-```
+`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid` and `fbclid` on the page URL are copied onto the widget and button URLs. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
 
-A `2xx` response shows “You’re on the list”. Any other result shows an error and does not claim the person joined. Add a privacy note next to the form when addresses actually leave the browser.
+If the loader fails, Book buttons go to the hosted checkout for experience 1326696.
+
+## Analytics
+
+`_headers` allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Google, Meta or TikTok pixels.
+
+Button, question, map, support, scroll, widget and purchase signals dispatch a `cityclue:track` event. They are forwarded to `plausible` or `dataLayer` only when those globals already exist. A confirmed Bokun `BookingConfirmed` message is recorded as `purchase` without the booking reference.
 
 ## Local preview
 
@@ -64,18 +76,24 @@ python3 -m http.server 8080
 
 Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a local server; opening the file directly will not load them.
 
+`python3 -m http.server` does not apply `_headers`. Cloudflare Pages does.
+
 ## Files
 
 | Path | Purpose |
 | --- | --- |
 | `index.html` | Landing page |
-| `styles.css` | Layout and theme |
-| `main.js` | Waitlist placeholder |
+| `terms.html`, `privacy.html`, `cancellation.html`, `support.html`, `thanks.html` | Policy and support pages |
+| `styles.css` | Design tokens, Bricolage Grotesque + Outfit, section layout |
+| `main.js` | Booking widget, sticky bar, questions, event signals |
 | `404.html` | Missing-page fallback |
-| `favicon.svg` | Icon |
-| `og.png` | Share image (1200×630) |
+| `favicon.svg`, `favicon.ico`, `site.webmanifest` | Icon set at the site root |
+| `img/` | Hero, OG (`img/og/og-1200x630.jpg`), logos, mockups, route, Bruce, icons |
+| `img/lifestyle/` | Responsive lifestyle photos (WebP 480/768/1080 and a 1280 JPG) |
 | `_headers` | Security headers Pages applies on deploy |
 | `robots.txt`, `sitemap.xml` | Search hints for cityclue.site |
-| `assets/fonts/` | Fraunces and Outfit (SIL Open Font License) |
+| `assets/fonts/` | Self-hosted Bricolage Grotesque and Outfit (SIL Open Font License) |
 
-No analytics, cookies, or paid APIs.
+Fonts stay on this origin. `font-src` is `'self'` only, with no Google Fonts hosts.
+
+The illustrated hero is the default. Add `is-photo` to the hero section to crop in `img/lifestyle/hero-group-*` instead. High-five sits in How it works, couple-bridge in Route & logistics, and phone-closeup next to booking. Those photos use `srcset` and `loading="lazy"`. The route SVG is inlined so the page fonts apply. Schema `Product.image` is `/img/hero/hero-desktop-1440.jpg`.
