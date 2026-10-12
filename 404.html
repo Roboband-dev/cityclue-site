@@ -3,27 +3,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Page not found · City Clue</title>
+    <title>Page not found | City Clue</title>
     <meta name="robots" content="noindex">
-    <meta name="theme-color" content="#100e0c">
+    <meta name="theme-color" content="#1A1128">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/styles.css">
   </head>
-  <body class="page-missing">
+  <body class="page-missing" data-page="missing">
+    <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="logo" href="/">
-          <img src="/favicon.svg" width="28" height="28" alt="">
-          <span class="logo-word">City Clue</span>
+          <img src="/img/logo/cityclue-logo-light.svg" width="122" height="28" alt="City Clue">
         </a>
-        <a class="button button-primary button-small" href="/#join">Join the list</a>
+        <a class="btn-primary btn-header bokunButton" data-cta="header" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book · $14.99</a>
       </div>
     </header>
     <main id="main" class="wrap missing">
       <p class="eyebrow">404</p>
       <h1>This stop isn't on the route.</h1>
-      <p>That page isn't here. The tour still starts on the home page.</p>
-      <a class="button button-primary" href="/">Back to City Clue</a>
+      <p>That page isn't here. The Strip game still starts on the home page.</p>
+      <a class="btn-primary bokunButton" data-cta="missing" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience/1326696?partialView=1">Book the Strip game</a>
     </main>
+    <script src="/main.js" defer></script>
   </body>
 </html>
