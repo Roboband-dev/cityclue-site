@@ -340,19 +340,44 @@ button:focus-visible {
   .hero-media img {
     height: 100%;
     max-height: none;
-    object-position: 70% 40%;
+    /* Keep the calm left of the art under the copy. 70% pulls the phone too far left below 1280px. */
+    object-position: 46% 38%;
   }
 
-  .hero.is-photo .hero-media img { object-position: 70% 40%; }
+  .hero.is-photo .hero-media img { object-position: 58% 40%; }
 
   .hero-copy {
-    margin-top: 0;
-    padding: 48px 0;
-    max-width: 560px;
+    justify-self: start;
+    align-self: center;
+    /* Stay left of the phone. The floor keeps the Book button on one line. */
+    width: min(560px, max(24rem, calc(47vw - max(2rem, (100% - var(--wrap)) / 2) - 2.75rem)));
+    margin: 0 auto 0 max(2rem, calc((100% - var(--wrap)) / 2));
+    padding: 40px 0 48px;
     z-index: 1;
   }
 
-  .cta-row .btn-primary { width: auto; }
+  .hero .chips {
+    flex-wrap: wrap;
+    overflow: visible;
+    max-width: 100%;
+  }
+
+  .hero .cta-row .btn-primary {
+    width: auto;
+    max-width: 100%;
+  }
+
+  .hero .micro { max-width: 36em; }
+}
+
+@media (min-width: 1280px) {
+  .hero-media img { object-position: 70% 40%; }
+  .hero.is-photo .hero-media img { object-position: 70% 40%; }
+
+  .hero-copy {
+    width: min(35rem, calc(50vw - max(2rem, (100% - var(--wrap)) / 2) - 2.5rem));
+    padding: 48px 0;
+  }
 }
 
 .trust {
