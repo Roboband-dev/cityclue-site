@@ -319,10 +319,11 @@ button:focus-visible {
 
 .hero-media img {
   width: 100%;
-  height: 38svh;
-  max-height: 38svh;
-  object-fit: cover;
-  object-position: 50% 0;
+  height: auto;
+  max-height: none;
+  /* Full portrait, then the copy. A short cover crop cut Bruce off and the headline sat on what remained. */
+  object-fit: contain;
+  object-position: center top;
 }
 
 .hero-art-photo { display: none; }
@@ -333,8 +334,8 @@ button:focus-visible {
 
 .hero-copy {
   position: relative;
-  margin-top: -56px;
-  padding-bottom: 28px;
+  margin-top: 0;
+  padding: 20px 0 28px;
 }
 
 .cta-row { margin-top: 20px; }
@@ -362,6 +363,7 @@ button:focus-visible {
   .hero-media img {
     height: 100%;
     max-height: none;
+    object-fit: cover;
     /* Anchor the bottom so the phone stays in frame. 46% keeps the copy left of the bezel. */
     object-position: 46% 100%;
   }
