@@ -2,7 +2,22 @@
   var CHANNEL = "7cbce2f5-33c8-4d4b-92b2-bec34c99555c";
   var LOADER = "https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=" + CHANNEL;
   var HOSTED = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience/1326696";
-  var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"];
+
+  // Google Ads purchase conversion.
+  // Paste the real values from Google Ads → Goals → Conversions → the purchase
+  // action → Tag setup → Use Google Tag Manager.
+  // GADS_ID is AW- plus digits. GADS_PURCHASE_LABEL is that action's label.
+  // While either value is still the placeholder below, gtag.js is not loaded
+  // and this file does not send a hit to Google.
+  var GADS_ID = "AW-XXXXXXXXX";
+  var GADS_PURCHASE_LABEL = "LABEL";
+
+  var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "gbraid", "wbraid", "gclsrc", "gad_source", "fbclid"];
+  var PURCHASE_KEY = "cityclue:gads-purchase:";
+  var claimedPurchases = Object.create(null);
+  var gtagInstalled = false;
+  var checkoutBegan = false;
+  var pendingEmail = "";
 
   function track(name, props) {
     var detail = { event: name };
@@ -21,12 +36,117 @@
         window.plausible(name, { props: props || {} });
       } catch (err) {}
     }
-    if (Array.isArray(window.dataLayer)) {
+    // Once this page owns dataLayer for gtag, keep scroll and click signals
+    // out of it. Those objects would otherwise be read as Google events.
+    if (Array.isArray(window.dataLayer) && !gtagInstalled) {
       window.dataLayer.push(detail);
     }
   }
 
   window.cityclueTrack = track;
+
+  function adsConfigured() {
+    if (!/^AW-\d{6,}$/.test(GADS_ID)) return false;
+    if (!GADS_PURCHASE_LABEL || GADS_PURCHASE_LABEL === "LABEL") return false;
+    if (!/^[A-Za-z0-9_-]{8,}$/.test(GADS_PURCHASE_LABEL)) return false;
+    return true;
+  }
+
+  function installGtag() {
+    if (!adsConfigured() || gtagInstalled) return;
+    gtagInstalled = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag("js", new Date());
+    window.gtag("set", "linker", {
+      domains: ["cityclue.site", "bokun.io"],
+      accept_incoming: true
+    });
+    window.gtag("config", GADS_ID, {
+      allow_enhanced_conversions: true,
+      linker: {
+        domains: ["cityclue.site", "bokun.io"],
+        accept_incoming: true
+      }
+    });
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GADS_ID);
+    document.head.appendChild(script);
+  }
+
+  function money(text) {
+    if (typeof text === "number" && isFinite(text)) return Math.round(text * 100) / 100;
+    var cleaned = String(text == null ? "" : text).replace(/,/g, "");
+    var match = cleaned.match(/(\d+\.\d{2})/);
+    if (!match) return null;
+    return Number(match[1]);
+  }
+
+  function cleanEmail(value) {
+    if (typeof value !== "string") return "";
+    var email = value.trim();
+    if (email.length > 200 || email.indexOf(" ") !== -1 || email.indexOf("@") < 1) return "";
+    return email;
+  }
+
+  function bookingEmail(booking) {
+    if (!booking || typeof booking !== "object") return "";
+    var keys = ["email", "customerEmail", "contactEmail", "emailAddress"];
+    for (var i = 0; i < keys.length; i++) {
+      var email = cleanEmail(booking[keys[i]]);
+      if (email) return email;
+    }
+    return "";
+  }
+
+  function purchaseSeen(id) {
+    var key = PURCHASE_KEY + id;
+    if (claimedPurchases[key]) return true;
+    try {
+      return window.localStorage.getItem(key) === "1";
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function claimPurchase(id) {
+    var key = PURCHASE_KEY + id;
+    claimedPurchases[key] = true;
+    try {
+      window.localStorage.setItem(key, "1");
+    } catch (err) {}
+  }
+
+  function sendPurchase(id, value, email) {
+    if (!adsConfigured() || typeof window.gtag !== "function") return false;
+    if (id == null || id === "") return false;
+    var transactionId = String(id);
+    if (purchaseSeen(transactionId)) return false;
+    claimPurchase(transactionId);
+    var userEmail = cleanEmail(email) || pendingEmail;
+    if (userEmail) {
+      window.gtag("set", "user_data", { email: userEmail });
+    }
+    var payload = {
+      send_to: GADS_ID + "/" + GADS_PURCHASE_LABEL,
+      currency: "USD",
+      transaction_id: transactionId
+    };
+    if (typeof value === "number" && isFinite(value)) payload.value = value;
+    window.gtag("event", "conversion", payload);
+    return true;
+  }
+
+  function beginCheckout(source) {
+    if (checkoutBegan) return;
+    checkoutBegan = true;
+    track("begin_checkout", { source: source });
+    if (!adsConfigured() || typeof window.gtag !== "function") return;
+    window.gtag("event", "begin_checkout", { currency: "USD" });
+  }
 
   function withTracking(url) {
     var incoming = new URLSearchParams(window.location.search);
@@ -132,6 +252,7 @@
 
   document.querySelectorAll("a.bokunButton").forEach(function (el) {
     el.addEventListener("click", function (event) {
+      beginCheckout("book");
       if (event.isTrusted) track("cta_click", { location: el.getAttribute("data-cta") || "book" });
       if (el.getAttribute("data-bokun-widget-loaded") === "true") return;
       if (loaderFailed) return;
@@ -234,7 +355,10 @@
 
   function syncModal() {
     modalOpen = modalIsOpen();
-    if (modalOpen && !modalWasOpen) track("widget_open", {});
+    if (modalOpen && !modalWasOpen) {
+      track("widget_open", {});
+      beginCheckout("widget");
+    }
     modalWasOpen = modalOpen;
     updateSticky();
   }
@@ -275,7 +399,7 @@
   function isBokunOrigin(origin) {
     try {
       var host = new URL(origin).hostname;
-      return host === "bokun.io" || host.slice(-8) === ".bokun.io";
+      return host === "bokun.io" || host.slice(-9) === ".bokun.io";
     } catch (err) {
       return false;
     }
@@ -294,23 +418,69 @@
     }
   }
 
-  window.addEventListener("message", function (event) {
-    if (!isBokunOrigin(event.origin)) return;
-    var message = readMessage(event.data);
+  function noteUserData(args) {
+    if (!Array.isArray(args) || args[0] !== "set" || args[1] !== "user_data") return false;
+    var email = cleanEmail(args[2] && args[2].email);
+    if (email) pendingEmail = email;
+    return true;
+  }
+
+  function purchaseFromArgs(args) {
+    var params = null;
+    if (Array.isArray(args) && args[0] === "event" && (args[1] === "purchase" || args[1] === "conversion")) {
+      params = args[2] && typeof args[2] === "object" ? args[2] : {};
+    } else if (args && typeof args === "object" && !Array.isArray(args) && (args.event === "purchase" || args.event === "conversion")) {
+      params = args.ecommerce && typeof args.ecommerce === "object" ? args.ecommerce : args;
+    }
+    if (!params) return null;
+    return {
+      id: params.transaction_id || params.bookingId || params.booking_id || "",
+      value: money(params.value),
+      email: bookingEmail(params)
+    };
+  }
+
+  function handleBokunMessage(origin, data) {
+    if (!isBokunOrigin(origin)) return;
+    var message = readMessage(data);
     if (!message || !message.messageType) return;
     if (message.messageType === "AddingToCart") {
       track("checkout_start", {});
+      beginCheckout("cart");
     }
     if (message.messageType === "BookingConfirmed") {
       var booking = message.booking || {};
+      var status = booking.status;
       var purchase = { currency: "USD" };
-      if (booking.status) purchase.status = booking.status;
-      var total = booking.totalText ? String(booking.totalText) : "";
-      var amount = total.replace(/,/g, "").match(/(\d+\.\d{2})/);
-      if (amount) purchase.value = amount[1];
+      if (status) purchase.status = status;
+      var value = money(booking.totalText);
+      if (value != null) purchase.value = value;
+      if (booking.bookingId != null && booking.bookingId !== "") purchase.transaction_id = String(booking.bookingId);
       track("purchase", purchase);
+      if ((status === "CONFIRMED" || status === "REQUESTED") && purchase.transaction_id) {
+        sendPurchase(purchase.transaction_id, value, bookingEmail(booking));
+      }
     }
+    if (message.messageType === "GaEvent") {
+      if (noteUserData(message.args)) return;
+      if (Array.isArray(message.args) && message.args[0] === "event" && message.args[1] === "begin_checkout") {
+        beginCheckout("bokun");
+        return;
+      }
+      var forwarded = purchaseFromArgs(message.args);
+      if (forwarded && forwarded.id) sendPurchase(forwarded.id, forwarded.value, forwarded.email);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    handleBokunMessage(event.origin, event.data);
   });
+
+  window.cityclueAds = {
+    configured: adsConfigured,
+    handleBokunMessage: handleBokunMessage,
+    beginCheckout: beginCheckout
+  };
 
   var fallback = document.getElementById("book-fallback");
   if (widget && fallback) {
@@ -319,12 +489,20 @@
     }, 12000);
   }
 
+  installGtag();
+
   if (document.body.getAttribute("data-page") === "thanks") {
     var params = new URLSearchParams(window.location.search);
     var thanks = { currency: "USD" };
-    if (params.get("value")) thanks.value = params.get("value");
+    var valueParam = params.get("value") || params.get("total");
+    if (valueParam) thanks.value = valueParam;
     if (params.get("players")) thanks.players = params.get("players");
+    var bookingId = params.get("bookingId") || params.get("booking_id") || params.get("transaction_id");
+    if (bookingId) thanks.transaction_id = bookingId;
     track("thanks_view", thanks);
+    // A finished-booking redirect is the completion signal. The same booking
+    // id on a later load, including refresh, is ignored.
+    if (bookingId) sendPurchase(bookingId, money(valueParam), params.get("email"));
   }
 
   if (header) header.classList.toggle("is-scrolled", window.scrollY > 8);

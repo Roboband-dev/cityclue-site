@@ -50,21 +50,51 @@ Pull requests get preview URLs after the project is connected. Production update
 | `/privacy` | Privacy, including Bokun and Stripe |
 | `/cancellation` | 24-hour cancellation policy |
 | `/support` | support@riftstudios.ai |
-| `/thanks` | Post-purchase note. Point Bokun's redirect here if the channel supports one. `noindex`. |
+| `/thanks` | Post-purchase note. `noindex`. Records a Google Ads purchase only when the URL includes a booking id. Bokun does not document a redirect to this page. |
 
 ## Booking widget
 
 `main.js` loads `BokunWidgetsLoader.js` after first paint (or sooner, if someone reaches a Book button or the price section). The channel is `7cbce2f5-33c8-4d4b-92b2-bec34c99555c`.
 
-`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid` and `fbclid` on the page URL are copied onto the widget and button URLs. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
+`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `gbraid`, `wbraid`, `gclsrc`, `gad_source` and `fbclid` on the page URL are copied onto the widget and button URLs. Nothing on this site strips the landing-page query string. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
 
 If the loader fails, Book buttons go to the hosted checkout for experience 1326696.
 
 ## Analytics
 
-`_headers` allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Google, Meta or TikTok pixels.
+Google Ads purchase tracking is configured at the top of `main.js`:
 
-Button, question, map, support, scroll, widget and purchase signals dispatch a `cityclue:track` event. They are forwarded to `plausible` or `dataLayer` only when those globals already exist. A confirmed Bokun `BookingConfirmed` message is recorded as `purchase` without the booking reference.
+```js
+var GADS_ID = "AW-XXXXXXXXX";
+var GADS_PURCHASE_LABEL = "LABEL";
+```
+
+While either value is still that placeholder, `gtag.js` is not loaded and nothing is sent to Google. There is no phone-call conversion.
+
+When both values are real, every page that loads `main.js` loads `https://www.googletagmanager.com/gtag/js?id=AW-…`. The tag turns on enhanced conversions and a cross-domain linker for `cityclue.site` and `bokun.io`.
+
+A purchase is `gtag('event', 'conversion', { send_to: GADS_ID + '/' + GADS_PURCHASE_LABEL, value, currency: 'USD', transaction_id })`. `transaction_id` is the Bokun booking ID. The same id is stored in `localStorage`, so a second message or a refresh does not send again. A normal page load does not send a purchase. If an email is present, `gtag('set', 'user_data', { email })` runs immediately before that event.
+
+The purchase is sent from either of these:
+
+- A `BookingConfirmed` postMessage from `*.bokun.io` whose status is `CONFIRMED` or `REQUESTED`, with `booking.bookingId` and `booking.totalText`. The current Bokun widget only posts that message when the confirmation page is inside an iframe (`parentIFrame`). A checkout tab on `bookings.bokun.io` does not post it back to cityclue.site. The payload has no email field.
+- A Bokun `GaEvent` postMessage that is already a `purchase` or `conversion` with a transaction id, which is the same when checkout is iframed and forwards its dataLayer. A `set user_data` message from that frame is kept in memory for the purchase on this page view.
+- The first view of `/thanks?bookingId=…&value=29.98` (also `booking_id` or `transaction_id`, optional `email`). Bokun's checkout help does not document a setting that redirects here. The page is ready if one is ever added.
+
+Opening a Book button, the booking modal, or an `AddingToCart` message sends one diagnostic `begin_checkout`. That event has no `send_to` and is not a purchase.
+
+Bokun's own integration is what can record the purchase for a new-tab checkout. In the Bokun extranet, open Settings → Sales Settings → Booking channel → the channel for this site (`7cbce2f5-33c8-4d4b-92b2-bec34c99555c`) → Tracking.
+
+- Turn on Google Tag Manager and paste the real `GTM-` container ID. Bokun's help says GTM is required for this integration.
+- Turn on Google Ads Conversion Tracking and paste the same conversion ID and conversion label as `GADS_ID` and `GADS_PURCHASE_LABEL`.
+- On that Tracking page, under Google Tag Manager, click Setup with Bókun, download the JSON, import it into the container, and Publish.
+- This repo does not load a GTM container. Add the container snippet on the site only after that `GTM-` id exists.
+
+`_headers` allows the Google tag hosts (`googletagmanager.com`, `google-analytics.com`, `googleadservices.com`, `doubleclick.net`, `google.com`) on `script-src`, `img-src`, `connect-src`, and `frame-src` as Google's tag CSP lists them. `script-src` still does not allow `unsafe-inline` or `unsafe-eval`. Fonts stay self-hosted.
+
+Button, question, map, support, scroll, widget and purchase signals still dispatch a `cityclue:track` event. They are forwarded to `plausible` when that global exists. They are not copied into the Google tag's `dataLayer`.
+
+`_headers` also allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Meta or TikTok pixels.
 
 ## Local preview
 
@@ -85,7 +115,7 @@ Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a
 | `index.html` | Landing page |
 | `terms.html`, `privacy.html`, `cancellation.html`, `support.html`, `thanks.html` | Policy and support pages |
 | `styles.css` | Design tokens, Bricolage Grotesque + Outfit, section layout |
-| `main.js` | Booking widget, sticky bar, questions, event signals |
+| `main.js` | Booking widget, sticky bar, questions, Google Ads purchase tag |
 | `404.html` | Missing-page fallback |
 | `favicon.svg`, `favicon.ico`, `site.webmanifest` | Icon set at the site root |
 | `img/` | Hero, OG (`img/og/og-1200x630.jpg`), logos, mockups, route, Bruce, icons |
