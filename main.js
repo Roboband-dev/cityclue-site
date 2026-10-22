@@ -3,18 +3,19 @@
   var LOADER = "https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=" + CHANNEL;
   var HOSTED = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience/1326696";
 
-  // Google Ads purchase conversion.
-  // Paste the real values from Google Ads → Goals → Conversions → the purchase
-  // action → Tag setup → Use Google Tag Manager.
-  // GADS_ID is AW- plus digits. GADS_PURCHASE_LABEL is that action's label.
-  // While either value is still the placeholder below, gtag.js is not loaded
-  // and this file does not send a hit to Google.
-  var GADS_ID = "AW-XXXXXXXXX";
-  var GADS_PURCHASE_LABEL = "LABEL";
+  // Google Ads purchase conversion. These are public tag ids.
+  // GTM-TWJ46LDV is the container Bokun's checkout loads. It is not loaded here.
+  // A purchase on this page uses the Bokun booking id as transaction_id so Google
+  // Ads can drop a second hit for the same conversion action. While either value
+  // is still a placeholder, gtag.js is not loaded.
+  var GADS_ID = "AW-18531609653";
+  var GADS_PURCHASE_LABEL = "7l5DCO3TjKYdELXYx4RF";
 
   var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "gbraid", "wbraid", "gclsrc", "gad_source", "fbclid"];
   var PURCHASE_KEY = "cityclue:gads-purchase:";
   var claimedPurchases = Object.create(null);
+  var purchaseSentOnPage = false;
+  var allowConversion = false;
   var gtagInstalled = false;
   var checkoutBegan = false;
   var pendingEmail = "";
@@ -57,6 +58,12 @@
     gtagInstalled = true;
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () {
+      // Bokun can forward a conversion into this page. Only sendPurchase may
+      // emit the purchase conversion, and only once per page view.
+      if (arguments[0] === "event" && arguments[1] === "conversion") {
+        if (!allowConversion) return;
+        allowConversion = false;
+      }
       window.dataLayer.push(arguments);
     };
     window.gtag("js", new Date());
@@ -124,7 +131,8 @@
     if (!adsConfigured() || typeof window.gtag !== "function") return false;
     if (id == null || id === "") return false;
     var transactionId = String(id);
-    if (purchaseSeen(transactionId)) return false;
+    if (purchaseSentOnPage || purchaseSeen(transactionId)) return false;
+    purchaseSentOnPage = true;
     claimPurchase(transactionId);
     var userEmail = cleanEmail(email) || pendingEmail;
     if (userEmail) {
@@ -136,6 +144,7 @@
       transaction_id: transactionId
     };
     if (typeof value === "number" && isFinite(value)) payload.value = value;
+    allowConversion = true;
     window.gtag("event", "conversion", payload);
     return true;
   }
@@ -425,21 +434,6 @@
     return true;
   }
 
-  function purchaseFromArgs(args) {
-    var params = null;
-    if (Array.isArray(args) && args[0] === "event" && (args[1] === "purchase" || args[1] === "conversion")) {
-      params = args[2] && typeof args[2] === "object" ? args[2] : {};
-    } else if (args && typeof args === "object" && !Array.isArray(args) && (args.event === "purchase" || args.event === "conversion")) {
-      params = args.ecommerce && typeof args.ecommerce === "object" ? args.ecommerce : args;
-    }
-    if (!params) return null;
-    return {
-      id: params.transaction_id || params.bookingId || params.booking_id || "",
-      value: money(params.value),
-      email: bookingEmail(params)
-    };
-  }
-
   function handleBokunMessage(origin, data) {
     if (!isBokunOrigin(origin)) return;
     var message = readMessage(data);
@@ -465,10 +459,9 @@
       if (noteUserData(message.args)) return;
       if (Array.isArray(message.args) && message.args[0] === "event" && message.args[1] === "begin_checkout") {
         beginCheckout("bokun");
-        return;
       }
-      var forwarded = purchaseFromArgs(message.args);
-      if (forwarded && forwarded.id) sendPurchase(forwarded.id, forwarded.value, forwarded.email);
+      // A forwarded purchase is not sent again from here. BookingConfirmed
+      // is the purchase for this page, and its transaction_id is the booking id.
     }
   }
 
