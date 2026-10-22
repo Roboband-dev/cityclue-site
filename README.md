@@ -50,21 +50,33 @@ Pull requests get preview URLs after the project is connected. Production update
 | `/privacy` | Privacy, including Bokun and Stripe |
 | `/cancellation` | 24-hour cancellation policy |
 | `/support` | support@riftstudios.ai |
-| `/thanks` | Post-purchase note. Point Bokun's redirect here if the channel supports one. `noindex`. |
+| `/thanks` | Post-purchase note. `noindex`. Does not send a Google Ads purchase. Bokun does not document a redirect to this page. |
 
 ## Booking widget
 
 `main.js` loads `BokunWidgetsLoader.js` after first paint (or sooner, if someone reaches a Book button or the price section). The channel is `7cbce2f5-33c8-4d4b-92b2-bec34c99555c`.
 
-`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid` and `fbclid` on the page URL are copied onto the widget and button URLs. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
+`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `gbraid`, `wbraid`, `gclsrc`, `gad_source` and `fbclid` on the page URL are copied onto the widget and button URLs. Nothing on this site strips the landing-page query string. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
 
 If the loader fails, Book buttons go to the hosted checkout for experience 1326696.
 
 ## Analytics
 
-`_headers` allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Google, Meta or TikTok pixels.
+Every page that loads `main.js` loads `https://www.googletagmanager.com/gtm.js?id=GTM-TWJ46LDV` from that file. There is no direct `gtag('config', 'AW-18531609653')` and no `gtag/js?id=AW-18531609653` added by this site. The container is the only config of `AW-18531609653`: its Google tag fires on All Pages, a Conversion Linker fires with it, and the Ads conversion (`18531609653` / `7l5DCO3TjKYdELXYx4RF`) fires only on a dataLayer event named `purchase`. The conversion's order id is `ecommerce.transaction_id`. There is no phone-call conversion.
 
-Button, question, map, support, scroll, widget and purchase signals dispatch a `cityclue:track` event. They are forwarded to `plausible` or `dataLayer` only when those globals already exist. A confirmed Bokun `BookingConfirmed` message is recorded as `purchase` without the booking reference.
+Bokun's loader checks `script[src^="https://www.googletagmanager.com/gtm.js"]`. When that tag is already present it does not inject its own bootstrap. That bootstrap is an inline script, and `script-src` does not allow `unsafe-inline`, so the inline copy never ran and the iframes were told the parent had already handled tagging. Loading the container from `main.js` is what lets Bokun's setup run.
+
+This page does not send its own purchase conversion. A `BookingConfirmed` message is recorded only as a local `cityclue:track` event. It is not pushed to `dataLayer`, because that would be a second `purchase` for GTM. `/thanks` does not send one either. Bokun does not document a redirect to `/thanks`, and a hit from this page would use the booking id in the query string. GTM's order id is whatever Bokun puts in `ecommerce.transaction_id`. The receipt screen's own transaction object uses the confirmation code as `id`. Those strings are not the same, so Google Ads would not treat them as one booking ([transaction id deduplication](https://support.google.com/google-ads/answer/6386790)).
+
+Opening a Book button, the booking modal, or an `AddingToCart` message pushes one `{event: "begin_checkout", currency: "USD"}` onto `dataLayer`. The published container has no tag on that event, so it is not sent to Google Ads and it is not a purchase. The Ads conversion tag fires only when the event name is `purchase`.
+
+Bokun still has to send the `purchase` event. In the extranet that is already set: Settings → Sales Settings → Booking channel → `7cbce2f5-33c8-4d4b-92b2-bec34c99555c` → Tracking, with Google Tag Manager `GTM-TWJ46LDV` and Google Ads `AW-18531609653` / `7l5DCO3TjKYdELXYx4RF`, and the container published. An iframed checkout forwards dataLayer objects to this page as `GaEvent`, and Bokun's parent listener pushes them onto this page's `dataLayer`. A top-level tab on `bookings.bokun.io` is its own window, so it loads this same container itself and the purchase stays on that origin.
+
+`_headers` allows the Google tag hosts (`googletagmanager.com`, `google-analytics.com`, `googleadservices.com`, `doubleclick.net`, `google.com`) on `script-src`, `img-src`, `connect-src`, and `frame-src` as Google's tag CSP lists them. `script-src` still does not allow `unsafe-inline` or `unsafe-eval`. Fonts stay self-hosted.
+
+Button, question, map, support, scroll, widget and purchase signals still dispatch a `cityclue:track` event. They are forwarded to `plausible` when that global exists. They are not copied into the Google tag's `dataLayer`.
+
+`_headers` also allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Meta or TikTok pixels.
 
 ## Local preview
 
@@ -85,7 +97,7 @@ Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a
 | `index.html` | Landing page |
 | `terms.html`, `privacy.html`, `cancellation.html`, `support.html`, `thanks.html` | Policy and support pages |
 | `styles.css` | Design tokens, Bricolage Grotesque + Outfit, section layout |
-| `main.js` | Booking widget, sticky bar, questions, event signals |
+| `main.js` | Booking widget, sticky bar, questions, GTM container load |
 | `404.html` | Missing-page fallback |
 | `favicon.svg`, `favicon.ico`, `site.webmanifest` | Icon set at the site root |
 | `img/` | Hero, OG (`img/og/og-1200x630.jpg`), logos, mockups, route, Bruce, icons |
