@@ -8,9 +8,10 @@
 # static.cloudflareinsights.com and cloudflareinsights.com are for cookieless
 # Cloudflare Web Analytics if it is turned on for the zone. connect-src 'self'
 # covers the automatic /cdn-cgi/rum beacon.
-# Google tag hosts are for gtag.js (Google Ads conversion and linker).
-# script-src still does not allow unsafe-inline or unsafe-eval.
-# The tag in main.js stays unloaded until the conversion ID and label are real.
+# Google tag hosts are for GTM-TWJ46LDV, loaded from main.js, and for the
+# Google tag, conversion linker, and Ads conversion that container runs.
+# script-src does not allow unsafe-inline or unsafe-eval. Bokun's inline GTM
+# bootstrap is skipped because the gtm.js script tag is already on the page.
 # payment= lists the booking and Stripe frames so wallets are not blocked
 # when those frames request the Payment Request API.
 

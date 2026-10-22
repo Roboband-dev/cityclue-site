@@ -3,22 +3,18 @@
   var LOADER = "https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=" + CHANNEL;
   var HOSTED = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience/1326696";
 
-  // Google Ads purchase conversion. These are public tag ids.
-  // GTM-TWJ46LDV is the container Bokun's checkout loads. It is not loaded here.
-  // A purchase on this page uses the Bokun booking id as transaction_id so Google
-  // Ads can drop a second hit for the same conversion action. While either value
-  // is still a placeholder, gtag.js is not loaded.
-  var GADS_ID = "AW-18531609653";
-  var GADS_PURCHASE_LABEL = "7l5DCO3TjKYdELXYx4RF";
+  // Public container id. BokunWidgets.js injects GTM with an inline script when
+  // no script[src^="https://www.googletagmanager.com/gtm.js"] is already on the
+  // page, then tells its iframes the parent handled tagging. CSP blocks that
+  // inline script, so the container never loaded. This file loads it instead.
+  // The container is the only config of AW-18531609653: Google tag on All Pages,
+  // Conversion Linker, and an Ads conversion on the dataLayer event "purchase"
+  // (order id ecommerce.transaction_id, label 7l5DCO3TjKYdELXYx4RF).
+  var GTM_ID = "GTM-TWJ46LDV";
 
   var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "gbraid", "wbraid", "gclsrc", "gad_source", "fbclid"];
-  var PURCHASE_KEY = "cityclue:gads-purchase:";
-  var claimedPurchases = Object.create(null);
-  var purchaseSentOnPage = false;
-  var allowConversion = false;
-  var gtagInstalled = false;
+  var gtmInstalled = false;
   var checkoutBegan = false;
-  var pendingEmail = "";
 
   function track(name, props) {
     var detail = { event: name };
@@ -37,52 +33,35 @@
         window.plausible(name, { props: props || {} });
       } catch (err) {}
     }
-    // Once this page owns dataLayer for gtag, keep scroll and click signals
-    // out of it. Those objects would otherwise be read as Google events.
-    if (Array.isArray(window.dataLayer) && !gtagInstalled) {
+    // Keep this page's own signals out of dataLayer. GTM's Ads tag fires on
+    // an event named purchase, so a local purchase or scroll object must not
+    // be pushed there.
+    if (Array.isArray(window.dataLayer) && !gtmInstalled) {
       window.dataLayer.push(detail);
     }
   }
 
   window.cityclueTrack = track;
 
-  function adsConfigured() {
-    if (!/^AW-\d{6,}$/.test(GADS_ID)) return false;
-    if (!GADS_PURCHASE_LABEL || GADS_PURCHASE_LABEL === "LABEL") return false;
-    if (!/^[A-Za-z0-9_-]{8,}$/.test(GADS_PURCHASE_LABEL)) return false;
-    return true;
-  }
-
-  function installGtag() {
-    if (!adsConfigured() || gtagInstalled) return;
-    gtagInstalled = true;
+  function installGtm() {
+    if (gtmInstalled) return;
+    gtmInstalled = true;
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function () {
-      // Bokun can forward a conversion into this page. Only sendPurchase may
-      // emit the purchase conversion, and only once per page view.
-      if (arguments[0] === "event" && arguments[1] === "conversion") {
-        if (!allowConversion) return;
-        allowConversion = false;
-      }
+    // Queue only. The Google tag inside GTM reads this. Do not config AW- here.
+    window.gtag = window.gtag || function () {
       window.dataLayer.push(arguments);
     };
-    window.gtag("js", new Date());
-    window.gtag("set", "linker", {
-      domains: ["cityclue.site", "bokun.io"],
-      accept_incoming: true
-    });
-    window.gtag("config", GADS_ID, {
-      allow_enhanced_conversions: true,
-      linker: {
-        domains: ["cityclue.site", "bokun.io"],
-        accept_incoming: true
-      }
+    window.dataLayer.push({
+      "gtm.start": new Date().getTime(),
+      event: "gtm.js"
     });
     var script = document.createElement("script");
     script.async = true;
-    script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GADS_ID);
+    script.src = "https://www.googletagmanager.com/gtm.js?id=" + GTM_ID;
     document.head.appendChild(script);
   }
+
+  installGtm();
 
   function money(text) {
     if (typeof text === "number" && isFinite(text)) return Math.round(text * 100) / 100;
@@ -92,68 +71,11 @@
     return Number(match[1]);
   }
 
-  function cleanEmail(value) {
-    if (typeof value !== "string") return "";
-    var email = value.trim();
-    if (email.length > 200 || email.indexOf(" ") !== -1 || email.indexOf("@") < 1) return "";
-    return email;
-  }
-
-  function bookingEmail(booking) {
-    if (!booking || typeof booking !== "object") return "";
-    var keys = ["email", "customerEmail", "contactEmail", "emailAddress"];
-    for (var i = 0; i < keys.length; i++) {
-      var email = cleanEmail(booking[keys[i]]);
-      if (email) return email;
-    }
-    return "";
-  }
-
-  function purchaseSeen(id) {
-    var key = PURCHASE_KEY + id;
-    if (claimedPurchases[key]) return true;
-    try {
-      return window.localStorage.getItem(key) === "1";
-    } catch (err) {
-      return false;
-    }
-  }
-
-  function claimPurchase(id) {
-    var key = PURCHASE_KEY + id;
-    claimedPurchases[key] = true;
-    try {
-      window.localStorage.setItem(key, "1");
-    } catch (err) {}
-  }
-
-  function sendPurchase(id, value, email) {
-    if (!adsConfigured() || typeof window.gtag !== "function") return false;
-    if (id == null || id === "") return false;
-    var transactionId = String(id);
-    if (purchaseSentOnPage || purchaseSeen(transactionId)) return false;
-    purchaseSentOnPage = true;
-    claimPurchase(transactionId);
-    var userEmail = cleanEmail(email) || pendingEmail;
-    if (userEmail) {
-      window.gtag("set", "user_data", { email: userEmail });
-    }
-    var payload = {
-      send_to: GADS_ID + "/" + GADS_PURCHASE_LABEL,
-      currency: "USD",
-      transaction_id: transactionId
-    };
-    if (typeof value === "number" && isFinite(value)) payload.value = value;
-    allowConversion = true;
-    window.gtag("event", "conversion", payload);
-    return true;
-  }
-
   function beginCheckout(source) {
     if (checkoutBegan) return;
     checkoutBegan = true;
     track("begin_checkout", { source: source });
-    if (!adsConfigured() || typeof window.gtag !== "function") return;
+    // Queued for the Google tag that GTM loads. No send_to and no config call.
     window.gtag("event", "begin_checkout", { currency: "USD" });
   }
 
@@ -427,13 +349,6 @@
     }
   }
 
-  function noteUserData(args) {
-    if (!Array.isArray(args) || args[0] !== "set" || args[1] !== "user_data") return false;
-    var email = cleanEmail(args[2] && args[2].email);
-    if (email) pendingEmail = email;
-    return true;
-  }
-
   function handleBokunMessage(origin, data) {
     if (!isBokunOrigin(origin)) return;
     var message = readMessage(data);
@@ -451,17 +366,14 @@
       if (value != null) purchase.value = value;
       if (booking.bookingId != null && booking.bookingId !== "") purchase.transaction_id = String(booking.bookingId);
       track("purchase", purchase);
-      if ((status === "CONFIRMED" || status === "REQUESTED") && purchase.transaction_id) {
-        sendPurchase(purchase.transaction_id, value, bookingEmail(booking));
-      }
     }
     if (message.messageType === "GaEvent") {
-      if (noteUserData(message.args)) return;
       if (Array.isArray(message.args) && message.args[0] === "event" && message.args[1] === "begin_checkout") {
         beginCheckout("bokun");
       }
-      // A forwarded purchase is not sent again from here. BookingConfirmed
-      // is the purchase for this page, and its transaction_id is the booking id.
+      // Bokun's own parent listener pushes a forwarded object, including a
+      // dataLayer purchase, onto this page. GTM's conversion tag already
+      // fires on that event. This page does not send a second conversion.
     }
   }
 
@@ -470,7 +382,8 @@
   });
 
   window.cityclueAds = {
-    configured: adsConfigured,
+    configured: function () { return gtmInstalled; },
+    container: GTM_ID,
     handleBokunMessage: handleBokunMessage,
     beginCheckout: beginCheckout
   };
@@ -482,8 +395,6 @@
     }, 12000);
   }
 
-  installGtag();
-
   if (document.body.getAttribute("data-page") === "thanks") {
     var params = new URLSearchParams(window.location.search);
     var thanks = { currency: "USD" };
@@ -493,9 +404,6 @@
     var bookingId = params.get("bookingId") || params.get("booking_id") || params.get("transaction_id");
     if (bookingId) thanks.transaction_id = bookingId;
     track("thanks_view", thanks);
-    // A finished-booking redirect is the completion signal. The same booking
-    // id on a later load, including refresh, is ignored.
-    if (bookingId) sendPurchase(bookingId, money(valueParam), params.get("email"));
   }
 
   if (header) header.classList.toggle("is-scrolled", window.scrollY > 8);

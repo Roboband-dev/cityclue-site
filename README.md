@@ -50,7 +50,7 @@ Pull requests get preview URLs after the project is connected. Production update
 | `/privacy` | Privacy, including Bokun and Stripe |
 | `/cancellation` | 24-hour cancellation policy |
 | `/support` | support@riftstudios.ai |
-| `/thanks` | Post-purchase note. `noindex`. Records a Google Ads purchase only when the URL includes a booking id. Bokun does not document a redirect to this page. |
+| `/thanks` | Post-purchase note. `noindex`. Does not send a Google Ads purchase. Bokun does not document a redirect to this page. |
 
 ## Booking widget
 
@@ -62,31 +62,15 @@ If the loader fails, Book buttons go to the hosted checkout for experience 13266
 
 ## Analytics
 
-Google Ads purchase tracking is configured at the top of `main.js`:
+Every page that loads `main.js` loads `https://www.googletagmanager.com/gtm.js?id=GTM-TWJ46LDV` from that file. There is no direct `gtag('config', 'AW-18531609653')` and no `gtag/js?id=AW-18531609653` added by this site. The container is the only config of `AW-18531609653`: its Google tag fires on All Pages, a Conversion Linker fires with it, and the Ads conversion (`18531609653` / `7l5DCO3TjKYdELXYx4RF`) fires only on a dataLayer event named `purchase`. The conversion's order id is `ecommerce.transaction_id`. There is no phone-call conversion.
 
-```js
-var GADS_ID = "AW-18531609653";
-var GADS_PURCHASE_LABEL = "7l5DCO3TjKYdELXYx4RF";
-```
+Bokun's loader checks `script[src^="https://www.googletagmanager.com/gtm.js"]`. When that tag is already present it does not inject its own bootstrap. That bootstrap is an inline script, and `script-src` does not allow `unsafe-inline`, so the inline copy never ran and the iframes were told the parent had already handled tagging. Loading the container from `main.js` is what lets Bokun's setup run.
 
-Those are public tag ids. Every page that loads `main.js` loads `https://www.googletagmanager.com/gtag/js?id=AW-18531609653`. The tag turns on enhanced conversions and a cross-domain linker for `cityclue.site` and `bokun.io`. There is no phone-call conversion. `GTM-TWJ46LDV` is the container Bokun's checkout uses. This site does not load it.
+This page does not send its own purchase conversion. A `BookingConfirmed` message is recorded only as a local `cityclue:track` event. It is not pushed to `dataLayer`, because that would be a second `purchase` for GTM. `/thanks` does not send one either. Bokun does not document a redirect to `/thanks`, and a hit from this page would use the booking id in the query string. GTM's order id is whatever Bokun puts in `ecommerce.transaction_id`. The receipt screen's own transaction object uses the confirmation code as `id`. Those strings are not the same, so Google Ads would not treat them as one booking ([transaction id deduplication](https://support.google.com/google-ads/answer/6386790)).
 
-A purchase is `gtag('event', 'conversion', { send_to: 'AW-18531609653/7l5DCO3TjKYdELXYx4RF', value, currency: 'USD', transaction_id })`. `transaction_id` is the Bokun booking id (`booking.bookingId`). The same id is stored in `localStorage`, and this page sends at most one purchase conversion per view, so a second message or a refresh does not send again. A normal page load does not send a purchase. If an email is present, `gtag('set', 'user_data', { email })` runs immediately before that event.
+Opening a Book button, the booking modal, or an `AddingToCart` message sends one diagnostic `begin_checkout` through `gtag('event', 'begin_checkout')`, queued for the Google tag GTM loads. That event has no `send_to` and is not a purchase.
 
-Google Ads counts a second hit for this same conversion action only when its order id differs or is missing ([transaction id deduplication](https://support.google.com/google-ads/answer/6386790)). The published `GTM-TWJ46LDV` container currently has no tags, so it does not fire a conversion. A new-tab checkout on `bookings.bokun.io` does not tell this page that the booking finished, so this page does not send a purchase for that booking. After the Bokun container is published, its Google Ads tag must use this same conversion id, label, and the numeric booking id as the order id. The receipt screen's own transaction object uses the confirmation code as `id`. If the imported tag sends that code, or sends no order id, an iframed confirmation can be counted twice.
-
-The purchase is sent from either of these:
-
-- A `BookingConfirmed` postMessage from `*.bokun.io` whose status is `CONFIRMED` or `REQUESTED`, with `booking.bookingId` and `booking.totalText`. The current Bokun widget only posts that message when the confirmation page is inside an iframe (`parentIFrame`). A checkout tab on `bookings.bokun.io` does not post it back to cityclue.site. The payload has no email field. A forwarded `GaEvent` can supply an email for that booking, and it is not turned into a second conversion.
-- The first view of `/thanks?bookingId=…&value=29.98` (also `booking_id` or `transaction_id`, optional `email`). Bokun's checkout help does not document a setting that redirects here. The page is ready if one is ever added.
-
-Opening a Book button, the booking modal, or an `AddingToCart` message sends one diagnostic `begin_checkout`. That event has no `send_to` and is not a purchase.
-
-Bokun's own integration is what can record the purchase for a new-tab checkout. In the Bokun extranet, open Settings → Sales Settings → Booking channel → the channel for this site (`7cbce2f5-33c8-4d4b-92b2-bec34c99555c`) → Tracking.
-
-- Turn on Google Tag Manager and paste `GTM-TWJ46LDV`. Bokun's help says GTM is required for this integration. Do not also paste that container into cityclue.site.
-- Turn on Google Ads Conversion Tracking and paste conversion id `AW-18531609653` and label `7l5DCO3TjKYdELXYx4RF`.
-- On that Tracking page, under Google Tag Manager, click Setup with Bókun, download the JSON, import it into `GTM-TWJ46LDV`, and set the Google Ads tag's order id to the numeric Bokun booking id (the same value this site sends as `transaction_id`). Then Publish.
+Bokun still has to send the `purchase` event. In the extranet that is already set: Settings → Sales Settings → Booking channel → `7cbce2f5-33c8-4d4b-92b2-bec34c99555c` → Tracking, with Google Tag Manager `GTM-TWJ46LDV` and Google Ads `AW-18531609653` / `7l5DCO3TjKYdELXYx4RF`, and the container published. An iframed checkout forwards dataLayer objects to this page as `GaEvent`, and Bokun's parent listener pushes them onto this page's `dataLayer`. A top-level tab on `bookings.bokun.io` is its own window, so it loads this same container itself and the purchase stays on that origin.
 
 `_headers` allows the Google tag hosts (`googletagmanager.com`, `google-analytics.com`, `googleadservices.com`, `doubleclick.net`, `google.com`) on `script-src`, `img-src`, `connect-src`, and `frame-src` as Google's tag CSP lists them. `script-src` still does not allow `unsafe-inline` or `unsafe-eval`. Fonts stay self-hosted.
 
@@ -113,7 +97,7 @@ Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a
 | `index.html` | Landing page |
 | `terms.html`, `privacy.html`, `cancellation.html`, `support.html`, `thanks.html` | Policy and support pages |
 | `styles.css` | Design tokens, Bricolage Grotesque + Outfit, section layout |
-| `main.js` | Booking widget, sticky bar, questions, Google Ads purchase tag |
+| `main.js` | Booking widget, sticky bar, questions, GTM container load |
 | `404.html` | Missing-page fallback |
 | `favicon.svg`, `favicon.ico`, `site.webmanifest` | Icon set at the site root |
 | `img/` | Hero, OG (`img/og/og-1200x630.jpg`), logos, mockups, route, Bruce, icons |
