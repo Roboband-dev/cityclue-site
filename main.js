@@ -75,8 +75,12 @@
     if (checkoutBegan) return;
     checkoutBegan = true;
     track("begin_checkout", { source: source });
-    // Queued for the Google tag that GTM loads. No send_to and no config call.
-    window.gtag("event", "begin_checkout", { currency: "USD" });
+    // Plain dataLayer event. GTM's Ads conversion listens for "purchase" only,
+    // so this does not send a conversion and it does not config the Google tag.
+    window.dataLayer.push({
+      event: "begin_checkout",
+      currency: "USD"
+    });
   }
 
   function withTracking(url) {
