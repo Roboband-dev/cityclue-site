@@ -22,6 +22,8 @@ Connect the GitHub repo. Pages will publish the files at the repository root.
 
 `index.html` is at the top of the output, which is what Pages serves on the project URL. There is no `package.json` and no GitHub Actions workflow. Cloudflare’s Git integration is the deploy.
 
+Leave the build command as `exit 0`. CSS and JS versioning does not need a compile step. See [Fresh CSS and JS](#fresh-css-and-js-on-every-deploy).
+
 Cloudflare’s own static-site guide uses `exit 0` as the build command when there is nothing to compile: [Static HTML](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/).
 
 The project name becomes the `*.pages.dev` hostname. `cityclue` yields `cityclue.pages.dev`.
@@ -78,6 +80,16 @@ Button, question, map, support, scroll, widget and purchase signals still dispat
 
 `_headers` also allows Cloudflare Web Analytics (`static.cloudflareinsights.com` and `cloudflareinsights.com`). Turn the beacon on in the Cloudflare dashboard. This site does not embed a token, and it does not load Meta or TikTok pixels.
 
+## Fresh CSS and JS on every deploy
+
+`functions/_middleware.js` runs when Pages serves a document. It hashes each root-relative `.css` and `.js` file the HTML points at (today `/styles.css` and `/main.js`) and rewrites those URLs to `/a/<hash>/styles.css` and `/a/<hash>/main.js`. The hash is the first 16 hex characters of SHA-256 of the file bytes, so a deploy that changes either file changes its URL. Fonts, images, the Bokun loader, and `gtm.js` are not rewritten.
+
+Hashed responses are `Cache-Control: public, max-age=31536000, immutable`. HTML routes are `no-cache, must-revalidate`, so the next visit sees the new URLs. `/styles.css` and `/main.js` themselves are also `no-cache, must-revalidate`. Those plain URLs are what a browser still holding an older document will request, and what the page uses if the Function does not run.
+
+`_routes.json` keeps images, fonts, icons, and the plain CSS and JS files off the Function. Nothing in the Cloudflare dashboard has to change: framework preset **None**, build command `exit 0`, build output directory `.`.
+
+If **Settings → Runtime → Fail open / closed** is fail open (the usual setting), a Functions quota miss still serves the site. Documents and the plain CSS and JS URLs revalidate instead of using the hashed URL. Leave it fail open.
+
 ## Local preview
 
 From the repo root:
@@ -88,7 +100,7 @@ python3 -m http.server 8080
 
 Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a local server; opening the file directly will not load them.
 
-`python3 -m http.server` does not apply `_headers`. Cloudflare Pages does.
+`python3 -m http.server` does not apply `_headers` and does not run `functions/_middleware.js`. Local documents still request `/styles.css` and `/main.js`. Cloudflare Pages does both.
 
 ## Files
 
@@ -102,7 +114,9 @@ Open `http://127.0.0.1:8080`. Root-relative assets (`/styles.css`, fonts) need a
 | `favicon.svg`, `favicon.ico`, `site.webmanifest` | Icon set at the site root |
 | `img/` | Hero, OG (`img/og/og-1200x630.jpg`), logos, mockups, route, Bruce, icons |
 | `img/lifestyle/` | Responsive lifestyle photos (WebP 480/768/1080 and a 1280 JPG) |
-| `_headers` | Security headers Pages applies on deploy |
+| `_headers` | Security headers and cache lifetimes Pages applies on deploy |
+| `functions/_middleware.js` | Content-hashed CSS and JS URLs in HTML |
+| `_routes.json` | Which requests invoke that Function |
 | `robots.txt`, `sitemap.xml` | Search hints for cityclue.site |
 | `assets/fonts/` | Self-hosted Bricolage Grotesque and Outfit (SIL Open Font License) |
 
