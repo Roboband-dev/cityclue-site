@@ -14,6 +14,13 @@
 # bootstrap is skipped because the gtm.js script tag is already on the page.
 # payment= lists the booking and Stripe frames so wallets are not blocked
 # when those frames request the Payment Request API.
+#
+# Cache-Control is not set on /* . A header named twice is joined with a
+# comma, and /* also matches the font and image rules below.
+# HTML documents revalidate on every visit. The Pages Function rewrites
+# stylesheet and script URLs to /a/<content-hash>/..., and that response
+# is cached for a year. The plain /styles.css and /main.js URLs revalidate
+# too, so a document that still points at them cannot keep a stale copy.
 
 /*
   X-Content-Type-Options: nosniff
@@ -27,3 +34,48 @@
 
 /img/*
   Cache-Control: public, max-age=31536000, immutable
+
+/styles.css
+  Cache-Control: no-cache, must-revalidate
+
+/main.js
+  Cache-Control: no-cache, must-revalidate
+
+/
+  Cache-Control: no-cache, must-revalidate
+
+/index.html
+  Cache-Control: no-cache, must-revalidate
+
+/terms
+  Cache-Control: no-cache, must-revalidate
+
+/terms.html
+  Cache-Control: no-cache, must-revalidate
+
+/privacy
+  Cache-Control: no-cache, must-revalidate
+
+/privacy.html
+  Cache-Control: no-cache, must-revalidate
+
+/cancellation
+  Cache-Control: no-cache, must-revalidate
+
+/cancellation.html
+  Cache-Control: no-cache, must-revalidate
+
+/support
+  Cache-Control: no-cache, must-revalidate
+
+/support.html
+  Cache-Control: no-cache, must-revalidate
+
+/thanks
+  Cache-Control: no-cache, must-revalidate
+
+/thanks.html
+  Cache-Control: no-cache, must-revalidate
+
+/404.html
+  Cache-Control: no-cache, must-revalidate
