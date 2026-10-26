@@ -1,7 +1,7 @@
 (function () {
   var CHANNEL = "7cbce2f5-33c8-4d4b-92b2-bec34c99555c";
   var LOADER = "https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=" + CHANNEL;
-  var HOSTED = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience/1326696";
+  var CALENDAR = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience-calendar/1326696";
 
   // Public container id. BokunWidgets.js injects GTM with an inline script when
   // no script[src^="https://www.googletagmanager.com/gtm.js"] is already on the
@@ -15,6 +15,8 @@
   var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "gbraid", "wbraid", "gclsrc", "gad_source", "fbclid"];
   var gtmInstalled = false;
   var checkoutBegan = false;
+  var statusTimer = 0;
+  var DATE_CTAS = { header: true, sticky: true, hero: true, features: true, final: true };
 
   function track(name, props) {
     var detail = { event: name };
@@ -98,14 +100,104 @@
     return next.toString();
   }
 
+  function toCalendarUrl(url) {
+    try {
+      var next = new URL(url, window.location.href);
+      if (/\/experience\/1326696\/?$/.test(next.pathname)) {
+        next.pathname = new URL(CALENDAR).pathname;
+        next.searchParams.delete("partialView");
+      }
+      return next.toString();
+    } catch (err) {
+      return url;
+    }
+  }
+
   function prepareWidgetUrls() {
     document.querySelectorAll(".bokunWidget[data-src], a.bokunButton[href]").forEach(function (el) {
       if (el.classList.contains("bokunWidget")) {
         el.setAttribute("data-src", withTracking(el.getAttribute("data-src")));
       } else {
-        el.setAttribute("href", withTracking(el.getAttribute("href")));
+        el.setAttribute("href", withTracking(toCalendarUrl(el.getAttribute("href"))));
       }
     });
+  }
+
+  function hideBookingStatus() {
+    var status = document.getElementById("booking-status");
+    if (status) status.hidden = true;
+    if (statusTimer) {
+      window.clearTimeout(statusTimer);
+      statusTimer = 0;
+    }
+  }
+
+  function showBookingStatus(mode) {
+    var status = document.getElementById("booking-status");
+    if (!status) {
+      status = document.createElement("div");
+      status.id = "booking-status";
+      status.className = "booking-status";
+      status.setAttribute("role", "status");
+      status.innerHTML = '<span class="booking-spinner" aria-hidden="true"></span><span>Opening secure booking…</span>';
+      document.body.appendChild(status);
+    }
+    status.hidden = false;
+    if (statusTimer) window.clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(hideBookingStatus, mode === "scroll" ? 1400 : 20000);
+  }
+
+  function watchModalFrame(frame) {
+    if (!frame || frame.getAttribute("data-cityclue-load") === "true") return;
+    frame.setAttribute("data-cityclue-load", "true");
+    frame.addEventListener("load", function () {
+      if (!frame.getAttribute("src")) return;
+      window.setTimeout(hideBookingStatus, 250);
+    });
+  }
+
+  function collapseCartBubble() {
+    document.querySelectorAll("iframe").forEach(function (el) {
+      var src = el.getAttribute("src") || "";
+      if (src.indexOf("WidgetsCartBubble") === -1 && src.indexOf("CartBubble") === -1) return;
+      if (el.getAttribute("data-cityclue-cart") === "hidden") return;
+      el.setAttribute("data-cityclue-cart", "hidden");
+      var nodes = [el];
+      var parent = el.parentElement;
+      if (parent && parent !== document.body && parent.id !== "bokun-modal-container") {
+        var onlyBubble = true;
+        Array.prototype.forEach.call(parent.children, function (child) {
+          if (child !== el && child.tagName !== "SCRIPT") onlyBubble = false;
+        });
+        if (onlyBubble) nodes.push(parent);
+      }
+      nodes.forEach(function (node) {
+        node.style.setProperty("position", "absolute", "important");
+        node.style.setProperty("width", "0", "important");
+        node.style.setProperty("height", "0", "important");
+        node.style.setProperty("min-height", "0", "important");
+        node.style.setProperty("max-height", "0", "important");
+        node.style.setProperty("overflow", "hidden", "important");
+        node.style.setProperty("opacity", "0", "important");
+        node.style.setProperty("pointer-events", "none", "important");
+        node.style.setProperty("margin", "0", "important");
+        node.style.setProperty("border", "0", "important");
+        node.style.setProperty("inset", "auto", "important");
+      });
+    });
+  }
+
+  function watchCalendar(widget) {
+    function ready() {
+      if (!widget.querySelector("iframe")) return false;
+      widget.classList.add("is-ready");
+      return true;
+    }
+    if (ready() || !("MutationObserver" in window)) return;
+    var watcher = new MutationObserver(function () {
+      if (ready()) watcher.disconnect();
+    });
+    watcher.observe(widget, { childList: true, subtree: true });
   }
 
   var loaderStarted = false;
@@ -160,40 +252,40 @@
     }
   }
 
+  // Homepage Book buttons scroll to the calendar already on the page. That is
+  // one tap and skips the product-page overlay. Pages without #book keep the
+  // button click, and the href is the experience calendar.
   window.addEventListener("click", function (event) {
     var node = event.target;
-    var heroLink = node && node.closest ? node.closest("[data-cta='hero']") : null;
-    if (!heroLink || !window.matchMedia("(min-width: 900px)").matches) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    if (event.isTrusted) track("cta_click", { location: "hero" });
+    var link = node && node.closest ? node.closest("a[data-cta]") : null;
+    if (!link || !DATE_CTAS[link.getAttribute("data-cta")]) return;
     var bookTarget = document.getElementById("book");
     if (!bookTarget) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    var cta = link.getAttribute("data-cta");
+    if (event.isTrusted) track("cta_click", { location: cta });
+    var desktopHero = cta === "hero" && window.matchMedia("(min-width: 900px)").matches;
+    if (!desktopHero) beginCheckout("book");
+    showBookingStatus("scroll");
+    loadBokun();
+    link.setAttribute("aria-busy", "true");
+    window.setTimeout(function () { link.removeAttribute("aria-busy"); }, 1400);
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     bookTarget.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }, true);
-
-  var heroBook = document.querySelector("[data-cta='hero']");
-  if (heroBook) {
-    heroBook.addEventListener("click", function (event) {
-      if (window.matchMedia("(min-width: 900px)").matches) return;
-      if (event.isTrusted) track("cta_click", { location: "hero" });
-      var opener = document.querySelector("a.bokunButton");
-      if (!opener) return;
-      event.preventDefault();
-      opener.click();
-    });
-  }
 
   document.querySelectorAll("a.bokunButton").forEach(function (el) {
     el.addEventListener("click", function (event) {
       beginCheckout("book");
       if (event.isTrusted) track("cta_click", { location: el.getAttribute("data-cta") || "book" });
+      showBookingStatus("overlay");
       if (el.getAttribute("data-bokun-widget-loaded") === "true") return;
       if (loaderFailed) return;
       event.preventDefault();
       if (el.getAttribute("data-booking-wait") === "true") return;
       el.setAttribute("data-booking-wait", "true");
+      el.setAttribute("aria-busy", "true");
       loadBokun();
       var tries = 0;
       var timer = window.setInterval(function () {
@@ -201,10 +293,12 @@
         if (el.getAttribute("data-bokun-widget-loaded") === "true") {
           window.clearInterval(timer);
           el.removeAttribute("data-booking-wait");
+          el.removeAttribute("aria-busy");
           el.click();
         } else if (loaderFailed || tries > 40) {
           window.clearInterval(timer);
           el.removeAttribute("data-booking-wait");
+          el.removeAttribute("aria-busy");
           window.location.assign(el.href);
         }
       }, 100);
@@ -294,7 +388,10 @@
       track("widget_open", {});
       beginCheckout("widget");
     }
+    if (modalOpen) watchModalFrame(document.getElementById("bokun-modal-iFrame"));
+    else if (modalWasOpen) hideBookingStatus();
     modalWasOpen = modalOpen;
+    collapseCartBubble();
     updateSticky();
   }
 
@@ -393,10 +490,13 @@
   };
 
   var fallback = document.getElementById("book-fallback");
-  if (widget && fallback) {
-    window.setTimeout(function () {
-      if (!widget.querySelector("iframe")) fallback.hidden = false;
-    }, 12000);
+  if (widget) {
+    watchCalendar(widget);
+    if (fallback) {
+      window.setTimeout(function () {
+        if (!widget.querySelector("iframe")) fallback.hidden = false;
+      }, 12000);
+    }
   }
 
   if (document.body.getAttribute("data-page") === "thanks") {

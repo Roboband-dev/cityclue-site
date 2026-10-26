@@ -4,7 +4,7 @@ Landing page for [cityclue.site](https://cityclue.site).
 
 City Clue is a self-guided walking game for adults 21+ on the Las Vegas Strip, made by Rift Studios (a DBA of Arcade of Satoshi LLC). The brand name is two words. The domain stays `cityclue.site`. This repository is the static marketing site: HTML, CSS and JS, no framework, no build step, and no secrets.
 
-Bookings run through the Bokun widget for experience #1326696 ($14.99 per player, Stripe, USD). The inline calendar sits in the price section. Book buttons open the Bokun checkout. On desktop (900px and up) the hero button smooth-scrolls to `#book` instead.
+Bookings run through the Bokun widget for experience #1326696 ($14.99 per player, Stripe, USD). The inline calendar sits in the price section. On the homepage, the header, sticky bar, hero, and other Book buttons scroll to that calendar, so the date picker is one tap away. Pages without `#book` open the experience calendar in the Bokun overlay.
 
 ## Deploy on Cloudflare Pages
 
@@ -60,7 +60,7 @@ Pull requests get preview URLs after the project is connected. Production update
 
 `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `gbraid`, `wbraid`, `gclsrc`, `gad_source` and `fbclid` on the page URL are copied onto the widget and button URLs. Nothing on this site strips the landing-page query string. Bokun also reads `gclid` from the page and sends the full page URL as `hostUrl`.
 
-If the loader fails, Book buttons go to the hosted checkout for experience 1326696.
+If the loader fails, Book buttons go to the hosted experience calendar for experience 1326696.
 
 ## Analytics
 

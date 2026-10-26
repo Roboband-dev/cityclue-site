@@ -175,6 +175,11 @@ a:hover { color: var(--cc-text); }
 
 .site-header.is-scrolled { border-bottom: 1px solid var(--cc-line); }
 
+main [id],
+#main {
+  scroll-margin-top: calc(var(--header) + 20px);
+}
+
 .header-inner {
   height: 100%;
   display: flex;
@@ -317,13 +322,25 @@ button:focus-visible {
   width: 100%;
 }
 
+.hero-media {
+  overflow: hidden;
+}
+
 .hero-media img {
   width: 100%;
-  height: auto;
-  max-height: none;
-  /* Full portrait, then the copy. A short cover crop cut Bruce off and the headline sat on what remained. */
-  object-fit: contain;
-  object-position: center top;
+  /* Fallback if svh is missing. The clamp is the real cap. */
+  height: 128px;
+  max-height: 128px;
+  height: clamp(100px, calc(100svh - 548px), 188px);
+  max-height: clamp(100px, calc(100svh - 548px), 188px);
+  /* Crop the portrait so the headline sits under the art, not on it. */
+  object-fit: cover;
+  object-position: 50% 40%;
+}
+
+.hero .chips {
+  flex-wrap: wrap;
+  overflow: visible;
 }
 
 .hero-art-photo { display: none; }
@@ -335,7 +352,15 @@ button:focus-visible {
 .hero-copy {
   position: relative;
   margin-top: 0;
-  padding: 20px 0 28px;
+  padding: 12px 0 16px;
+}
+
+@media (max-width: 899px) and (max-height: 720px) {
+  .hero-copy { padding-top: 8px; }
+  .hero h1 { font-size: 32px; }
+  .hero .lede { margin-top: 8px; }
+  .hero .chips { margin-top: 8px; }
+  .hero .cta-row { margin-top: 12px; }
 }
 
 .cta-row { margin-top: 20px; }
@@ -799,11 +824,59 @@ button:focus-visible {
 
 .points .icon { color: var(--cc-gold); margin-top: 3px; }
 
+.book-column { min-width: 0; }
+
+.what-you-get {
+  margin: 0 0 14px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--cc-line);
+  border-radius: var(--r-lg);
+  background: rgba(253, 234, 222, .06);
+}
+
+.what-you-get h3 { font-size: 18px; }
+
+.what-you-get ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.what-you-get li {
+  position: relative;
+  margin: 0;
+  padding: 3px 0 3px 16px;
+  color: var(--cc-text);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.what-you-get li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cc-gold);
+}
+
+.book-everyday {
+  margin: 0 0 10px;
+  font: 700 13px / 1.3 var(--cc-font-body);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cc-gold);
+}
+
 .book-panel {
-  margin-top: 28px;
+  margin-top: 0;
   padding: 20px 20px 12px;
   min-height: 640px;
-  background: #fff;
+  background:
+    radial-gradient(80% 40% at 50% 0%, rgba(233, 188, 110, .28), transparent 70%),
+    #f7efe6;
   border: 0;
   border-radius: 28px;
   box-shadow: 0 18px 40px rgba(8, 4, 16, .28);
@@ -811,12 +884,72 @@ button:focus-visible {
 }
 
 .bokunWidget {
+  position: relative;
   min-height: 620px;
   border: 0;
   border-radius: 16px;
-  background: #fff;
+  background:
+    radial-gradient(80% 50% at 50% 0%, rgba(233, 188, 110, .22), transparent 70%),
+    #f7efe6;
   color: #1a1128;
   overflow: hidden;
+}
+
+.calendar-pending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px 20px;
+  text-align: center;
+  color: #1a1128;
+  font: 650 16px / 1.4 var(--cc-font-body);
+}
+
+.bokunWidget.is-ready .calendar-pending { display: none; }
+
+.booking-spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(26, 17, 40, .18);
+  border-top-color: #1a1128;
+  animation: booking-spin .7s linear infinite;
+}
+
+@keyframes booking-spin { to { transform: rotate(360deg); } }
+
+.booking-status {
+  position: fixed;
+  z-index: 2147483000;
+  left: 12px;
+  right: 12px;
+  top: calc(var(--header) + 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: var(--r-pill);
+  background: var(--cc-cream);
+  color: var(--cc-night);
+  font: 700 15px / 1.2 var(--cc-font-body);
+  box-shadow: 0 12px 32px rgba(8, 4, 16, .35);
+  pointer-events: none;
+}
+
+@media (min-width: 600px) {
+  .booking-status {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 32px);
+  }
 }
 
 .bokunWidget iframe {
@@ -824,6 +957,13 @@ button:focus-visible {
   width: 100%;
   border: 0;
   background: #fff;
+}
+
+.book-trust {
+  margin: 14px 0 0;
+  color: var(--cc-muted);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .book-help,
@@ -842,9 +982,13 @@ button:focus-visible {
   .price-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    grid-template-areas: "copy calendar";
     gap: 36px;
     align-items: stretch;
   }
+
+  .price-copy { grid-area: copy; }
+  .book-column { grid-area: calendar; }
 
   .price-copy {
     display: flex;
@@ -868,7 +1012,7 @@ button:focus-visible {
 
   .book-panel {
     position: sticky;
-    top: calc(var(--header) + 16px);
+    top: calc(var(--header) + 20px);
     margin-top: 0;
     padding: 16px 16px 8px;
     min-height: 560px;
@@ -1140,6 +1284,23 @@ button:focus-visible {
 @media (min-width: 769px) {
   .bookbar { display: none; }
   body { padding-bottom: 0; }
+}
+
+iframe[src*="WidgetsCartBubble"],
+iframe[src*="CartBubble"],
+div:has(> iframe[src*="WidgetsCartBubble"]),
+div:has(> iframe[src*="CartBubble"]) {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  inset: auto !important;
 }
 
 .sheet { padding: calc(var(--header) + 28px) 0 72px; }
