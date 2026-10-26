@@ -144,16 +144,23 @@
     }
     status.hidden = false;
     if (statusTimer) window.clearTimeout(statusTimer);
-    statusTimer = window.setTimeout(hideBookingStatus, mode === "scroll" ? 1400 : 20000);
+    /* The overlay preload never fires a fresh load event, so do not wait on
+       one. Hide as soon as the modal is visible, and never later than 1.8s. */
+    statusTimer = window.setTimeout(hideBookingStatus, mode === "scroll" ? 800 : 1800);
+    if (mode === "overlay") watchBookingSurface();
   }
 
-  function watchModalFrame(frame) {
-    if (!frame || frame.getAttribute("data-cityclue-load") === "true") return;
-    frame.setAttribute("data-cityclue-load", "true");
-    frame.addEventListener("load", function () {
-      if (!frame.getAttribute("src")) return;
-      window.setTimeout(hideBookingStatus, 250);
-    });
+  function watchBookingSurface() {
+    var tries = 0;
+    var timer = window.setInterval(function () {
+      tries += 1;
+      if (modalIsOpen()) {
+        window.clearInterval(timer);
+        hideBookingStatus();
+      } else if (tries > 18) {
+        window.clearInterval(timer);
+      }
+    }, 100);
   }
 
   function collapseCartBubble() {
@@ -187,17 +194,26 @@
     });
   }
 
-  function watchCalendar(widget) {
-    function ready() {
-      if (!widget.querySelector("iframe")) return false;
-      widget.classList.add("is-ready");
-      return true;
+  function watchCalendar(shell) {
+    if (!shell) return;
+    var widget = shell.querySelector(".bokunWidget") || shell;
+    function arm(frame) {
+      if (!frame || frame.getAttribute("data-cityclue-cal") === "true") return;
+      frame.setAttribute("data-cityclue-cal", "true");
+      frame.addEventListener("load", function () {
+        shell.classList.add("is-ready");
+      });
     }
-    if (ready() || !("MutationObserver" in window)) return;
-    var watcher = new MutationObserver(function () {
-      if (ready()) watcher.disconnect();
-    });
-    watcher.observe(widget, { childList: true, subtree: true });
+    function scan() {
+      arm(widget.querySelector("iframe"));
+    }
+    scan();
+    if ("MutationObserver" in window) {
+      new MutationObserver(scan).observe(widget, { childList: true, subtree: true });
+    }
+    window.setTimeout(function () {
+      shell.classList.add("is-ready");
+    }, 20000);
   }
 
   var loaderStarted = false;
@@ -259,7 +275,7 @@
     var node = event.target;
     var link = node && node.closest ? node.closest("a[data-cta]") : null;
     if (!link || !DATE_CTAS[link.getAttribute("data-cta")]) return;
-    var bookTarget = document.getElementById("book");
+    var bookTarget = document.getElementById("book-calendar") || document.getElementById("book");
     if (!bookTarget) return;
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -270,7 +286,7 @@
     showBookingStatus("scroll");
     loadBokun();
     link.setAttribute("aria-busy", "true");
-    window.setTimeout(function () { link.removeAttribute("aria-busy"); }, 1400);
+    window.setTimeout(function () { link.removeAttribute("aria-busy"); }, 800);
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     bookTarget.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }, true);
@@ -306,6 +322,7 @@
   });
 
   var priceTracked = false;
+  var calendarShell = document.querySelector("#book .calendar-shell");
   var widget = document.querySelector("#book .bokunWidget");
   if (widget) {
     widget.addEventListener("pointerdown", function () {
@@ -382,17 +399,20 @@
     desktopQuery.addListener(updateSticky);
   }
 
+  var syncingModal = false;
   function syncModal() {
+    if (syncingModal) return;
+    syncingModal = true;
     modalOpen = modalIsOpen();
     if (modalOpen && !modalWasOpen) {
       track("widget_open", {});
       beginCheckout("widget");
     }
-    if (modalOpen) watchModalFrame(document.getElementById("bokun-modal-iFrame"));
-    else if (modalWasOpen) hideBookingStatus();
+    if (modalOpen || modalWasOpen) hideBookingStatus();
     modalWasOpen = modalOpen;
     collapseCartBubble();
     updateSticky();
+    syncingModal = false;
   }
 
   if (document.body && "MutationObserver" in window) {
@@ -490,8 +510,8 @@
   };
 
   var fallback = document.getElementById("book-fallback");
+  if (calendarShell) watchCalendar(calendarShell);
   if (widget) {
-    watchCalendar(widget);
     if (fallback) {
       window.setTimeout(function () {
         if (!widget.querySelector("iframe")) fallback.hidden = false;

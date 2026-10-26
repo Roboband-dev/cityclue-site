@@ -214,7 +214,7 @@
         <a class="logo" href="/">
           <img src="/img/logo/cityclue-logo-light.svg" width="122" height="28" alt="City Clue">
         </a>
-        <a class="btn-primary btn-header bokunButton" data-cta="header" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">Book · $14.99</a>
+        <a class="btn-primary btn-header" data-cta="header" href="#book-calendar">Book · $14.99</a>
       </div>
     </header>
 
@@ -243,7 +243,7 @@
             <li class="chip"><svg class="icon" aria-hidden="true"><use href="#i-stops"></use></svg>13 stops</li>
           </ul>
           <div class="cta-row">
-            <a class="btn-primary" data-cta="hero" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696"><svg class="icon" aria-hidden="true"><use href="#i-ticket"></use></svg>Book now · $14.99 per player</a>
+            <a class="btn-primary" data-cta="hero" href="#book-calendar"><svg class="icon" aria-hidden="true"><use href="#i-ticket"></use></svg>Book now · $14.99 per player</a>
             <p class="micro">Free cancellation up to 24 hours before the date you chose · Access code by email · Pick any day, start any time</p>
           </div>
         </div>
@@ -377,7 +377,7 @@
           </ul>
           <p class="note-line">No casino entry, show tickets or gambling required. Drinks are optional and never included.</p>
           <div class="cta-row">
-            <a class="btn-primary bokunButton" data-cta="features" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">Book now · $14.99 per player</a>
+            <a class="btn-primary" data-cta="features" href="#book-calendar">Book now · $14.99 per player</a>
           </div>
         </div>
       </section>
@@ -440,28 +440,30 @@
       <section class="section price" id="book" aria-labelledby="price-title">
         <div class="wrap price-grid">
           <div class="book-column">
-            <div class="what-you-get">
-              <h3>What you get</h3>
-              <ul>
-                <li>An access code for each player, by email, right after booking.</li>
-                <li>It plays in your phone's browser at CityClue.app.</li>
-                <li>Valid on the date you pick.</li>
-                <li>Each player uses their own phone.</li>
-              </ul>
-            </div>
-            <p class="book-everyday">Tickets available every day</p>
-            <div class="book-panel" role="region" aria-label="Choose a date and book">
-              <div class="bokunWidget" data-src="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">
+            <div class="book-panel" id="book-calendar" role="region" aria-label="Choose a date and book">
+              <p class="book-everyday">Available every day</p>
+              <div class="calendar-shell">
                 <div class="calendar-pending">
                   <span class="booking-spinner" aria-hidden="true"></span>
                   <p>Opening secure booking…</p>
                 </div>
-                <noscript>Please enable JavaScript in your browser to book. You can also open the secure checkout at <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">widgets.bokun.io</a>.</noscript>
+                <div class="bokunWidget" data-src="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">
+                  <noscript>Please enable JavaScript in your browser to book. You can also open the secure checkout at <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">widgets.bokun.io</a>.</noscript>
+                </div>
               </div>
+              <p class="book-trust">Secure checkout by Bokun · Payments by Stripe · Free cancellation up to 24 hours before the date you chose, if the ticket has not been used.</p>
+              <p class="book-fallback" id="book-fallback" hidden><svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg><span>The calendar did not load. <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696" target="_blank" rel="noopener">Book on the secure checkout</a>.</span></p>
+              <p class="book-help"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>Questions before you book? <a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a></span></p>
             </div>
-            <p class="book-trust">Secure checkout by Bokun · Payments by Stripe · Free cancellation up to 24 hours before the date you chose, if the ticket has not been used.</p>
-            <p class="book-fallback" id="book-fallback" hidden><svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg><span>The calendar did not load. <a href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696" target="_blank" rel="noopener">Book on the secure checkout</a>.</span></p>
-            <p class="book-help"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><span>Questions before you book? <a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a></span></p>
+          </div>
+          <div class="what-you-get">
+            <h3>What you get</h3>
+            <ul>
+              <li>An access code for each player, by email, right after booking.</li>
+              <li>It plays right in your phone's browser; your code email has the link.</li>
+              <li>Valid on the date you pick.</li>
+              <li>Each player uses their own phone.</li>
+            </ul>
           </div>
           <div class="price-copy">
             <p class="eyebrow">Price</p>
@@ -576,7 +578,7 @@
             <h2 id="final-title">Bruce is waiting at the Cosmo.</h2>
             <p class="lede">13 stops, 90 minutes, one very judgmental comedian. Grab your crew.</p>
             <div class="cta-row">
-              <a class="btn-primary bokunButton" data-cta="final" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">Book now · $14.99 per player</a>
+              <a class="btn-primary" data-cta="final" href="#book-calendar">Book now · $14.99 per player</a>
               <p class="micro">Free cancellation up to 24h before · 21+</p>
             </div>
           </div>
@@ -611,7 +613,7 @@
         <span class="bookbar-amount">$14.99 / player</span>
         <span class="bookbar-note">Free cancellation</span>
       </p>
-      <a class="btn-primary bokunButton" data-cta="sticky" href="https://widgets.bokun.io/online-sales/7cbce2f5-33c8-4d4b-92b2-bec34c99555c/experience-calendar/1326696">Book now</a>
+      <a class="btn-primary" data-cta="sticky" href="#book-calendar">Book now</a>
     </div>
     <script src="/main.js" defer></script>
   </body>
