@@ -194,15 +194,41 @@
     });
   }
 
+  function revealDates(shell) {
+    if (!shell || !shell.classList.contains("is-ready")) return;
+    if (shell.getAttribute("data-cityclue-hold") === "true") return;
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    var view = shell.clientHeight;
+    var doc = frame.offsetHeight;
+    if (view < 80 || doc <= view + 8) return;
+    /* The month grid sits under the participant row and above Bokun's
+       booking summary, around the top 59% of the frame. Bias the visible
+       window there so the bookable days are on screen. */
+    var focusBottom = Math.round(doc * 0.59);
+    var top = Math.max(0, focusBottom - view + 16);
+    if (Math.abs(shell.scrollTop - top) < 4) return;
+    shell.scrollTop = top;
+  }
+
   function watchCalendar(shell) {
     if (!shell) return;
     var widget = shell.querySelector(".bokunWidget") || shell;
+    function hold() {
+      shell.setAttribute("data-cityclue-hold", "true");
+    }
+    shell.addEventListener("wheel", hold, { passive: true });
+    shell.addEventListener("touchstart", hold, { passive: true });
     function arm(frame) {
       if (!frame || frame.getAttribute("data-cityclue-cal") === "true") return;
       frame.setAttribute("data-cityclue-cal", "true");
       frame.addEventListener("load", function () {
         shell.classList.add("is-ready");
+        revealDates(shell);
       });
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(function () { revealDates(shell); }).observe(frame);
+      }
     }
     function scan() {
       arm(widget.querySelector("iframe"));
@@ -213,7 +239,10 @@
     }
     window.setTimeout(function () {
       shell.classList.add("is-ready");
+      revealDates(shell);
     }, 20000);
+    window.setTimeout(function () { revealDates(shell); }, 800);
+    window.setTimeout(function () { revealDates(shell); }, 1800);
   }
 
   var loaderStarted = false;
