@@ -961,9 +961,19 @@ button:focus-visible {
 
 .calendar-shell.is-ready { overflow: auto; }
 
-.calendar-shell.is-ready .calendar-pending { display: none; }
+.calendar-pending {
+  transition: opacity .35s ease;
+}
 
-.calendar-shell:not(.is-ready) .bokunWidget iframe { opacity: 0; }
+.calendar-shell.is-ready .calendar-pending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.calendar-shell:not(.is-ready) .bokunWidget,
+.calendar-shell:not(.is-ready) .bokunWidget iframe {
+  opacity: 0;
+}
 
 .booking-spinner {
   width: 22px;
@@ -1060,6 +1070,29 @@ button:focus-visible {
   .book-column { order: 1; }
   .what-you-get { order: 2; }
   .price-copy { order: 3; }
+
+  /* Let the iframe set the height so Checkout is in the page, not clipped
+     inside a 560px scroller. */
+  .calendar-shell,
+  .calendar-shell.is-ready {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .calendar-shell:not(.is-ready) { min-height: 560px; }
+
+  .calendar-pending { display: block; }
+
+  .calendar-pending-card {
+    position: sticky;
+    top: calc(var(--header) + 80px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-top: 48px;
+  }
 }
 
 @media (min-width: 900px) {

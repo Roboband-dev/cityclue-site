@@ -125,7 +125,10 @@
 
   function hideBookingStatus() {
     var status = document.getElementById("booking-status");
-    if (status) status.hidden = true;
+    // Setting hidden when it is already hidden still mutates the attribute in
+    // some browsers, and the modal observer is watching that attribute. The
+    // callback then calls this again and the page never yields.
+    if (status && !status.hidden) status.hidden = true;
     if (statusTimer) {
       window.clearTimeout(statusTimer);
       statusTimer = 0;
@@ -194,9 +197,20 @@
     });
   }
 
+  function shellCanScroll(shell) {
+    return shell.scrollHeight > shell.clientHeight + 8;
+  }
+
   function revealDates(shell) {
     if (!shell || !shell.classList.contains("is-ready")) return;
     if (shell.getAttribute("data-cityclue-hold") === "true") return;
+    if (shell.getAttribute("data-cityclue-picked") === "true") {
+      revealCheckout(shell);
+      return;
+    }
+    // Phones size the shell to the iframe, so the page scrolls instead of an
+    // inner box. Only the desktop card has an inner scroller.
+    if (!shellCanScroll(shell)) return;
     var frame = shell.querySelector("iframe");
     if (!frame) return;
     var view = shell.clientHeight;
@@ -211,6 +225,41 @@
     shell.scrollTop = top;
   }
 
+  function revealCheckout(shell) {
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    if (shellCanScroll(shell)) {
+      var view = shell.clientHeight;
+      var doc = frame.offsetHeight;
+      var top = Math.max(0, doc - view);
+      if (Math.abs(shell.scrollTop - top) > 4) shell.scrollTop = top;
+      return;
+    }
+    alignTarget = null;
+    var rect = frame.getBoundingClientRect();
+    var margin = 16;
+    var delta = rect.bottom - (window.innerHeight - margin);
+    if (delta > 2) window.scrollBy(0, delta);
+  }
+
+  function noteFrameSize(shell) {
+    if (!shell || shell.classList.contains("is-ready")) return;
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    var height = frame.offsetHeight;
+    // Bokun paints a near-white placeholder before the calendar has a height.
+    // Keep our cream cover up until that height shows up and holds still.
+    if (height < 520) return;
+    var previous = Number(shell.getAttribute("data-cityclue-h") || 0);
+    shell.setAttribute("data-cityclue-h", String(height));
+    if (previous && Math.abs(previous - height) < 24) {
+      shell.classList.add("is-ready");
+      revealDates(shell);
+      return;
+    }
+    window.setTimeout(function () { noteFrameSize(shell); }, 700);
+  }
+
   function watchCalendar(shell) {
     if (!shell) return;
     var widget = shell.querySelector(".bokunWidget") || shell;
@@ -219,17 +268,28 @@
     }
     shell.addEventListener("wheel", hold, { passive: true });
     shell.addEventListener("touchstart", hold, { passive: true });
+    function onPick(frame) {
+      if (!frame || !shell.contains(frame)) return;
+      shell.setAttribute("data-cityclue-picked", "true");
+      window.setTimeout(function () { revealCheckout(shell); }, 350);
+      window.setTimeout(function () { revealCheckout(shell); }, 1000);
+    }
     function arm(frame) {
       if (!frame || frame.getAttribute("data-cityclue-cal") === "true") return;
       frame.setAttribute("data-cityclue-cal", "true");
-      frame.addEventListener("load", function () {
-        shell.classList.add("is-ready");
-        revealDates(shell);
-      });
+      frame.addEventListener("load", function () { noteFrameSize(shell); });
+      frame.addEventListener("focus", function () { onPick(frame); });
       if ("ResizeObserver" in window) {
-        new ResizeObserver(function () { revealDates(shell); }).observe(frame);
+        new ResizeObserver(function () {
+          noteFrameSize(shell);
+          revealDates(shell);
+        }).observe(frame);
       }
     }
+    window.addEventListener("blur", function () {
+      var active = document.activeElement;
+      if (active && active.tagName === "IFRAME") onPick(active);
+    });
     function scan() {
       arm(widget.querySelector("iframe"));
     }
@@ -241,8 +301,7 @@
       shell.classList.add("is-ready");
       revealDates(shell);
     }, 20000);
-    window.setTimeout(function () { revealDates(shell); }, 800);
-    window.setTimeout(function () { revealDates(shell); }, 1800);
+    window.setTimeout(function () { noteFrameSize(shell); }, 800);
   }
 
   var loaderStarted = false;
@@ -316,8 +375,7 @@
     loadBokun();
     link.setAttribute("aria-busy", "true");
     window.setTimeout(function () { link.removeAttribute("aria-busy"); }, 800);
-    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    bookTarget.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    scheduleAlign(bookTarget);
   }, true);
 
   document.querySelectorAll("a.bokunButton").forEach(function (el) {
@@ -403,9 +461,10 @@
   function updateSticky() {
     if (!sticky) return;
     var show = !desktopQuery.matches && heroOut && !bookVisible && !modalOpen;
-    sticky.classList.toggle("is-visible", show);
-    if (show) sticky.removeAttribute("inert");
-    else sticky.setAttribute("inert", "");
+    if (sticky.classList.contains("is-visible") !== show) sticky.classList.toggle("is-visible", show);
+    var inert = sticky.hasAttribute("inert");
+    if (show && inert) sticky.removeAttribute("inert");
+    else if (!show && !inert) sticky.setAttribute("inert", "");
   }
 
   if (heroCta && "IntersectionObserver" in window) {
@@ -429,6 +488,8 @@
   }
 
   var syncingModal = false;
+  var modalObserver = null;
+  var modalPinned = false;
   function syncModal() {
     if (syncingModal) return;
     syncingModal = true;
@@ -441,17 +502,66 @@
     modalWasOpen = modalOpen;
     collapseCartBubble();
     updateSticky();
+    if (modalOpen && modalObserver && !modalPinned) {
+      var modal = document.getElementById("bokun-modal-container") || document.getElementById("bokun-modal-iFrame");
+      if (modal) {
+        modalObserver.disconnect();
+        modalObserver.observe(modal, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["style", "class", "aria-hidden"]
+        });
+        modalPinned = true;
+      }
+    }
     syncingModal = false;
   }
 
+  function onModalMutation(records) {
+    var relevant = false;
+    for (var i = 0; i < records.length; i++) {
+      var target = records[i].target;
+      if (!target || target.id === "booking-status") continue;
+      if (target.closest && target.closest("#booking-status")) continue;
+      relevant = true;
+      break;
+    }
+    if (relevant) syncModal();
+  }
+
   if (document.body && "MutationObserver" in window) {
-    new MutationObserver(syncModal).observe(document.body, {
+    modalObserver = new MutationObserver(onModalMutation);
+    // Do not watch "hidden". Hiding #booking-status would notify this
+    // observer, which hides it again.
+    modalObserver.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["style", "class", "hidden", "aria-hidden"]
+      attributeFilter: ["style", "class", "aria-hidden"]
     });
   }
+
+  var alignTarget = null;
+  function alignBookTarget(target) {
+    if (!target || alignTarget !== target) return;
+    var headerEl = document.querySelector(".site-header");
+    var headerBottom = headerEl ? headerEl.getBoundingClientRect().bottom : 0;
+    var desired = headerBottom + 20;
+    var delta = target.getBoundingClientRect().top - desired;
+    if (Math.abs(delta) <= 1) return;
+    window.scrollBy(0, delta);
+  }
+
+  function scheduleAlign(target) {
+    alignTarget = target;
+    [0, 60, 180, 450, 900, 1600, 2500].forEach(function (ms) {
+      window.setTimeout(function () { alignBookTarget(target); }, ms);
+    });
+  }
+
+  window.addEventListener("wheel", function () { alignTarget = null; }, { passive: true });
+  window.addEventListener("touchmove", function () { alignTarget = null; }, { passive: true });
 
   var depths = { 25: false, 50: false, 75: false, 100: false };
   var scrollTicking = false;
@@ -563,4 +673,8 @@
   prepareWidgetUrls();
   updateSticky();
   scheduleBokun();
+  if (location.hash === "#book-calendar" || location.hash === "#book") {
+    var hashed = document.getElementById("book-calendar") || document.getElementById("book");
+    if (hashed) scheduleAlign(hashed);
+  }
 })();
