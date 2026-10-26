@@ -1,7 +1,7 @@
 (function () {
   var CHANNEL = "7cbce2f5-33c8-4d4b-92b2-bec34c99555c";
   var LOADER = "https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=" + CHANNEL;
-  var HOSTED = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience/1326696";
+  var CALENDAR = "https://widgets.bokun.io/online-sales/" + CHANNEL + "/experience-calendar/1326696";
 
   // Public container id. BokunWidgets.js injects GTM with an inline script when
   // no script[src^="https://www.googletagmanager.com/gtm.js"] is already on the
@@ -15,6 +15,8 @@
   var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "gbraid", "wbraid", "gclsrc", "gad_source", "fbclid"];
   var gtmInstalled = false;
   var checkoutBegan = false;
+  var statusTimer = 0;
+  var DATE_CTAS = { header: true, sticky: true, hero: true, features: true, final: true };
 
   function track(name, props) {
     var detail = { event: name };
@@ -98,14 +100,208 @@
     return next.toString();
   }
 
+  function toCalendarUrl(url) {
+    try {
+      var next = new URL(url, window.location.href);
+      if (/\/experience\/1326696\/?$/.test(next.pathname)) {
+        next.pathname = new URL(CALENDAR).pathname;
+        next.searchParams.delete("partialView");
+      }
+      return next.toString();
+    } catch (err) {
+      return url;
+    }
+  }
+
   function prepareWidgetUrls() {
     document.querySelectorAll(".bokunWidget[data-src], a.bokunButton[href]").forEach(function (el) {
       if (el.classList.contains("bokunWidget")) {
         el.setAttribute("data-src", withTracking(el.getAttribute("data-src")));
       } else {
-        el.setAttribute("href", withTracking(el.getAttribute("href")));
+        el.setAttribute("href", withTracking(toCalendarUrl(el.getAttribute("href"))));
       }
     });
+  }
+
+  function hideBookingStatus() {
+    var status = document.getElementById("booking-status");
+    // Setting hidden when it is already hidden still mutates the attribute in
+    // some browsers, and the modal observer is watching that attribute. The
+    // callback then calls this again and the page never yields.
+    if (status && !status.hidden) status.hidden = true;
+    if (statusTimer) {
+      window.clearTimeout(statusTimer);
+      statusTimer = 0;
+    }
+  }
+
+  function showBookingStatus(mode) {
+    var status = document.getElementById("booking-status");
+    if (!status) {
+      status = document.createElement("div");
+      status.id = "booking-status";
+      status.className = "booking-status";
+      status.setAttribute("role", "status");
+      status.innerHTML = '<span class="booking-spinner" aria-hidden="true"></span><span>Opening secure booking…</span>';
+      document.body.appendChild(status);
+    }
+    status.hidden = false;
+    if (statusTimer) window.clearTimeout(statusTimer);
+    /* The overlay preload never fires a fresh load event, so do not wait on
+       one. Hide as soon as the modal is visible, and never later than 1.8s. */
+    statusTimer = window.setTimeout(hideBookingStatus, mode === "scroll" ? 800 : 1800);
+    if (mode === "overlay") watchBookingSurface();
+  }
+
+  function watchBookingSurface() {
+    var tries = 0;
+    var timer = window.setInterval(function () {
+      tries += 1;
+      if (modalIsOpen()) {
+        window.clearInterval(timer);
+        hideBookingStatus();
+      } else if (tries > 18) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+  }
+
+  function collapseCartBubble() {
+    document.querySelectorAll("iframe").forEach(function (el) {
+      var src = el.getAttribute("src") || "";
+      if (src.indexOf("WidgetsCartBubble") === -1 && src.indexOf("CartBubble") === -1) return;
+      if (el.getAttribute("data-cityclue-cart") === "hidden") return;
+      el.setAttribute("data-cityclue-cart", "hidden");
+      var nodes = [el];
+      var parent = el.parentElement;
+      if (parent && parent !== document.body && parent.id !== "bokun-modal-container") {
+        var onlyBubble = true;
+        Array.prototype.forEach.call(parent.children, function (child) {
+          if (child !== el && child.tagName !== "SCRIPT") onlyBubble = false;
+        });
+        if (onlyBubble) nodes.push(parent);
+      }
+      nodes.forEach(function (node) {
+        node.style.setProperty("position", "absolute", "important");
+        node.style.setProperty("width", "0", "important");
+        node.style.setProperty("height", "0", "important");
+        node.style.setProperty("min-height", "0", "important");
+        node.style.setProperty("max-height", "0", "important");
+        node.style.setProperty("overflow", "hidden", "important");
+        node.style.setProperty("opacity", "0", "important");
+        node.style.setProperty("pointer-events", "none", "important");
+        node.style.setProperty("margin", "0", "important");
+        node.style.setProperty("border", "0", "important");
+        node.style.setProperty("inset", "auto", "important");
+      });
+    });
+  }
+
+  function shellCanScroll(shell) {
+    return shell.scrollHeight > shell.clientHeight + 8;
+  }
+
+  function revealDates(shell) {
+    if (!shell || !shell.classList.contains("is-ready")) return;
+    if (shell.getAttribute("data-cityclue-hold") === "true") return;
+    if (shell.getAttribute("data-cityclue-picked") === "true") {
+      revealCheckout(shell);
+      return;
+    }
+    // Phones size the shell to the iframe, so the page scrolls instead of an
+    // inner box. Only the desktop card has an inner scroller.
+    if (!shellCanScroll(shell)) return;
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    var view = shell.clientHeight;
+    var doc = frame.offsetHeight;
+    if (view < 80 || doc <= view + 8) return;
+    /* The month grid sits under the participant row and above Bokun's
+       booking summary, around the top 59% of the frame. Bias the visible
+       window there so the bookable days are on screen. */
+    var focusBottom = Math.round(doc * 0.59);
+    var top = Math.max(0, focusBottom - view + 16);
+    if (Math.abs(shell.scrollTop - top) < 4) return;
+    shell.scrollTop = top;
+  }
+
+  function revealCheckout(shell) {
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    if (shellCanScroll(shell)) {
+      var view = shell.clientHeight;
+      var doc = frame.offsetHeight;
+      var top = Math.max(0, doc - view);
+      if (Math.abs(shell.scrollTop - top) > 4) shell.scrollTop = top;
+      return;
+    }
+    alignTarget = null;
+    var rect = frame.getBoundingClientRect();
+    var margin = 16;
+    var delta = rect.bottom - (window.innerHeight - margin);
+    if (delta > 2) window.scrollBy(0, delta);
+  }
+
+  function noteFrameSize(shell) {
+    if (!shell || shell.classList.contains("is-ready")) return;
+    var frame = shell.querySelector("iframe");
+    if (!frame) return;
+    var height = frame.offsetHeight;
+    // Bokun paints a near-white placeholder before the calendar has a height.
+    // Keep our cream cover up until that height shows up and holds still.
+    if (height < 520) return;
+    var previous = Number(shell.getAttribute("data-cityclue-h") || 0);
+    shell.setAttribute("data-cityclue-h", String(height));
+    if (previous && Math.abs(previous - height) < 24) {
+      shell.classList.add("is-ready");
+      revealDates(shell);
+      return;
+    }
+    window.setTimeout(function () { noteFrameSize(shell); }, 700);
+  }
+
+  function watchCalendar(shell) {
+    if (!shell) return;
+    var widget = shell.querySelector(".bokunWidget") || shell;
+    function hold() {
+      shell.setAttribute("data-cityclue-hold", "true");
+    }
+    shell.addEventListener("wheel", hold, { passive: true });
+    shell.addEventListener("touchstart", hold, { passive: true });
+    function onPick(frame) {
+      if (!frame || !shell.contains(frame)) return;
+      shell.setAttribute("data-cityclue-picked", "true");
+      window.setTimeout(function () { revealCheckout(shell); }, 350);
+      window.setTimeout(function () { revealCheckout(shell); }, 1000);
+    }
+    function arm(frame) {
+      if (!frame || frame.getAttribute("data-cityclue-cal") === "true") return;
+      frame.setAttribute("data-cityclue-cal", "true");
+      frame.addEventListener("load", function () { noteFrameSize(shell); });
+      frame.addEventListener("focus", function () { onPick(frame); });
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(function () {
+          noteFrameSize(shell);
+          revealDates(shell);
+        }).observe(frame);
+      }
+    }
+    window.addEventListener("blur", function () {
+      var active = document.activeElement;
+      if (active && active.tagName === "IFRAME") onPick(active);
+    });
+    function scan() {
+      arm(widget.querySelector("iframe"));
+    }
+    scan();
+    if ("MutationObserver" in window) {
+      new MutationObserver(scan).observe(widget, { childList: true, subtree: true });
+    }
+    window.setTimeout(function () {
+      shell.classList.add("is-ready");
+      revealDates(shell);
+    }, 20000);
+    window.setTimeout(function () { noteFrameSize(shell); }, 800);
   }
 
   var loaderStarted = false;
@@ -160,40 +356,39 @@
     }
   }
 
+  // Homepage Book buttons scroll to the calendar already on the page. That is
+  // one tap and skips the product-page overlay. Pages without #book keep the
+  // button click, and the href is the experience calendar.
   window.addEventListener("click", function (event) {
     var node = event.target;
-    var heroLink = node && node.closest ? node.closest("[data-cta='hero']") : null;
-    if (!heroLink || !window.matchMedia("(min-width: 900px)").matches) return;
+    var link = node && node.closest ? node.closest("a[data-cta]") : null;
+    if (!link || !DATE_CTAS[link.getAttribute("data-cta")]) return;
+    var bookTarget = document.getElementById("book-calendar") || document.getElementById("book");
+    if (!bookTarget) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    if (event.isTrusted) track("cta_click", { location: "hero" });
-    var bookTarget = document.getElementById("book");
-    if (!bookTarget) return;
-    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    bookTarget.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    var cta = link.getAttribute("data-cta");
+    if (event.isTrusted) track("cta_click", { location: cta });
+    var desktopHero = cta === "hero" && window.matchMedia("(min-width: 900px)").matches;
+    if (!desktopHero) beginCheckout("book");
+    showBookingStatus("scroll");
+    loadBokun();
+    link.setAttribute("aria-busy", "true");
+    window.setTimeout(function () { link.removeAttribute("aria-busy"); }, 800);
+    scheduleAlign(bookTarget);
   }, true);
-
-  var heroBook = document.querySelector("[data-cta='hero']");
-  if (heroBook) {
-    heroBook.addEventListener("click", function (event) {
-      if (window.matchMedia("(min-width: 900px)").matches) return;
-      if (event.isTrusted) track("cta_click", { location: "hero" });
-      var opener = document.querySelector("a.bokunButton");
-      if (!opener) return;
-      event.preventDefault();
-      opener.click();
-    });
-  }
 
   document.querySelectorAll("a.bokunButton").forEach(function (el) {
     el.addEventListener("click", function (event) {
       beginCheckout("book");
       if (event.isTrusted) track("cta_click", { location: el.getAttribute("data-cta") || "book" });
+      showBookingStatus("overlay");
       if (el.getAttribute("data-bokun-widget-loaded") === "true") return;
       if (loaderFailed) return;
       event.preventDefault();
       if (el.getAttribute("data-booking-wait") === "true") return;
       el.setAttribute("data-booking-wait", "true");
+      el.setAttribute("aria-busy", "true");
       loadBokun();
       var tries = 0;
       var timer = window.setInterval(function () {
@@ -201,10 +396,12 @@
         if (el.getAttribute("data-bokun-widget-loaded") === "true") {
           window.clearInterval(timer);
           el.removeAttribute("data-booking-wait");
+          el.removeAttribute("aria-busy");
           el.click();
         } else if (loaderFailed || tries > 40) {
           window.clearInterval(timer);
           el.removeAttribute("data-booking-wait");
+          el.removeAttribute("aria-busy");
           window.location.assign(el.href);
         }
       }, 100);
@@ -212,6 +409,7 @@
   });
 
   var priceTracked = false;
+  var calendarShell = document.querySelector("#book .calendar-shell");
   var widget = document.querySelector("#book .bokunWidget");
   if (widget) {
     widget.addEventListener("pointerdown", function () {
@@ -263,9 +461,10 @@
   function updateSticky() {
     if (!sticky) return;
     var show = !desktopQuery.matches && heroOut && !bookVisible && !modalOpen;
-    sticky.classList.toggle("is-visible", show);
-    if (show) sticky.removeAttribute("inert");
-    else sticky.setAttribute("inert", "");
+    if (sticky.classList.contains("is-visible") !== show) sticky.classList.toggle("is-visible", show);
+    var inert = sticky.hasAttribute("inert");
+    if (show && inert) sticky.removeAttribute("inert");
+    else if (!show && !inert) sticky.setAttribute("inert", "");
   }
 
   if (heroCta && "IntersectionObserver" in window) {
@@ -288,24 +487,81 @@
     desktopQuery.addListener(updateSticky);
   }
 
+  var syncingModal = false;
+  var modalObserver = null;
+  var modalPinned = false;
   function syncModal() {
+    if (syncingModal) return;
+    syncingModal = true;
     modalOpen = modalIsOpen();
     if (modalOpen && !modalWasOpen) {
       track("widget_open", {});
       beginCheckout("widget");
     }
+    if (modalOpen || modalWasOpen) hideBookingStatus();
     modalWasOpen = modalOpen;
+    collapseCartBubble();
     updateSticky();
+    if (modalOpen && modalObserver && !modalPinned) {
+      var modal = document.getElementById("bokun-modal-container") || document.getElementById("bokun-modal-iFrame");
+      if (modal) {
+        modalObserver.disconnect();
+        modalObserver.observe(modal, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["style", "class", "aria-hidden"]
+        });
+        modalPinned = true;
+      }
+    }
+    syncingModal = false;
+  }
+
+  function onModalMutation(records) {
+    var relevant = false;
+    for (var i = 0; i < records.length; i++) {
+      var target = records[i].target;
+      if (!target || target.id === "booking-status") continue;
+      if (target.closest && target.closest("#booking-status")) continue;
+      relevant = true;
+      break;
+    }
+    if (relevant) syncModal();
   }
 
   if (document.body && "MutationObserver" in window) {
-    new MutationObserver(syncModal).observe(document.body, {
+    modalObserver = new MutationObserver(onModalMutation);
+    // Do not watch "hidden". Hiding #booking-status would notify this
+    // observer, which hides it again.
+    modalObserver.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["style", "class", "hidden", "aria-hidden"]
+      attributeFilter: ["style", "class", "aria-hidden"]
     });
   }
+
+  var alignTarget = null;
+  function alignBookTarget(target) {
+    if (!target || alignTarget !== target) return;
+    var headerEl = document.querySelector(".site-header");
+    var headerBottom = headerEl ? headerEl.getBoundingClientRect().bottom : 0;
+    var desired = headerBottom + 20;
+    var delta = target.getBoundingClientRect().top - desired;
+    if (Math.abs(delta) <= 1) return;
+    window.scrollBy(0, delta);
+  }
+
+  function scheduleAlign(target) {
+    alignTarget = target;
+    [0, 60, 180, 450, 900, 1600, 2500].forEach(function (ms) {
+      window.setTimeout(function () { alignBookTarget(target); }, ms);
+    });
+  }
+
+  window.addEventListener("wheel", function () { alignTarget = null; }, { passive: true });
+  window.addEventListener("touchmove", function () { alignTarget = null; }, { passive: true });
 
   var depths = { 25: false, 50: false, 75: false, 100: false };
   var scrollTicking = false;
@@ -393,10 +649,13 @@
   };
 
   var fallback = document.getElementById("book-fallback");
-  if (widget && fallback) {
-    window.setTimeout(function () {
-      if (!widget.querySelector("iframe")) fallback.hidden = false;
-    }, 12000);
+  if (calendarShell) watchCalendar(calendarShell);
+  if (widget) {
+    if (fallback) {
+      window.setTimeout(function () {
+        if (!widget.querySelector("iframe")) fallback.hidden = false;
+      }, 12000);
+    }
   }
 
   if (document.body.getAttribute("data-page") === "thanks") {
@@ -414,4 +673,8 @@
   prepareWidgetUrls();
   updateSticky();
   scheduleBokun();
+  if (location.hash === "#book-calendar" || location.hash === "#book") {
+    var hashed = document.getElementById("book-calendar") || document.getElementById("book");
+    if (hashed) scheduleAlign(hashed);
+  }
 })();
