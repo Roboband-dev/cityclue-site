@@ -38,19 +38,26 @@
           {
             "@type": "Organization",
             "@id": "https://cityclue.site/#org",
-            "name": "City Clue by Rift Studios",
+            "name": "Rift Studios",
             "legalName": "Arcade of Satoshi LLC",
-            "url": "https://cityclue.site/",
+            "url": "https://cityclue.site",
             "email": "support@riftstudios.ai",
             "logo": "https://cityclue.site/favicon.svg"
           },
           {
             "@type": "TouristTrip",
             "@id": "https://cityclue.site/#trip",
-            "name": "Discover the Strip: Adults Only Vegas Strip Game Tour (21+)",
-            "description": "Walking game on the Las Vegas Strip with an in-app comedian host, clues, trivia and picture challenges. About 2.7 miles (4.3 km), about 90 minutes, self-guided. 13 stops.",
+            "name": "City Clue: Las Vegas Strip Self-Guided Walking Game",
+            "description": "A 21+ self-guided walking game on the Las Vegas Strip by Rift Studios. It starts at The Cosmopolitan of Las Vegas. 13 checkpoints. About 1 hr 30 min and about 2.7 mi / 4.3 km.",
             "touristType": "Adults 21+",
+            "url": "https://cityclue.site/",
+            "image": "https://cityclue.site/img/hero/hero-desktop-1440.jpg",
             "provider": { "@id": "https://cityclue.site/#org" },
+            "tripOrigin": {
+              "@type": "Place",
+              "name": "The Cosmopolitan of Las Vegas",
+              "address": "3708 S Las Vegas Blvd, Las Vegas, NV 89109"
+            },
             "itinerary": {
               "@type": "ItemList",
               "itemListElement": [
@@ -73,24 +80,33 @@
                 }
               ]
             },
-            "offers": { "@id": "https://cityclue.site/#offer" }
-          },
-          {
-            "@type": "Product",
-            "@id": "https://cityclue.site/#product",
-            "name": "Adults Only Vegas Strip Game Tour: Casinos, Cocktails & Clues (21+)",
-            "brand": { "@type": "Brand", "name": "City Clue" },
-            "image": ["https://cityclue.site/img/hero/hero-desktop-1440.jpg"],
-            "description": "One player ticket for City Clue's self-guided Discover the Strip walking game. Pick any day, start any time.",
             "offers": {
               "@type": "Offer",
               "@id": "https://cityclue.site/#offer",
               "price": "14.99",
               "priceCurrency": "USD",
               "availability": "https://schema.org/InStock",
-              "url": "https://cityclue.site/#book",
-              "eligibleCustomerType": "Adults 21+",
-              "seller": { "@id": "https://cityclue.site/#org" }
+              "url": "https://cityclue.site/#book-calendar",
+              "description": "Per player.",
+              "seller": { "@id": "https://cityclue.site/#org" },
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "14.99",
+                "priceCurrency": "USD",
+                "referenceQuantity": {
+                  "@type": "QuantitativeValue",
+                  "value": 1,
+                  "unitText": "player"
+                }
+              },
+              "hasMerchantReturnPolicy": {
+                "@type": "MerchantReturnPolicy",
+                "applicableCountry": "US",
+                "merchantReturnLink": "https://cityclue.site/cancellation",
+                "returnFees": "https://schema.org/FreeReturn",
+                "refundType": "https://schema.org/FullRefund",
+                "description": "You can cancel a City Clue ticket for a full refund up to 24 hours before the date you chose, as long as the ticket has not been used."
+              }
             }
           },
           {
