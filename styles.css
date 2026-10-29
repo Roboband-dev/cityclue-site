@@ -530,6 +530,15 @@ button:focus-visible {
   .trust-item + .trust-item::before { margin: 0 8px; }
 }
 
+#what-is-city-clue ul {
+  margin: 8px 0 0;
+  padding-left: 1.2em;
+  max-width: 68ch;
+}
+#what-is-city-clue li { margin-top: 8px; color: var(--cc-muted); }
+#what-is-city-clue h3 { margin: 28px 0 8px; }
+#what-is-city-clue ol { margin: 8px 0 0; padding-left: 1.2em; max-width: 68ch; }
+
 .section { padding: var(--sp-8) 0; }
 .section-raise { background: var(--cc-night-2); }
 

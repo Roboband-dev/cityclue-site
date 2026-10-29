@@ -42,17 +42,35 @@
             "legalName": "Arcade of Satoshi LLC",
             "url": "https://cityclue.site",
             "email": "support@riftstudios.ai",
-            "logo": "https://cityclue.site/favicon.svg"
+            "logo": "https://cityclue.site/favicon.svg",
+            "brand": {
+              "@type": "Brand",
+              "name": "City Clue"
+            },
+            "sameAs": [
+              "https://www.tripadvisor.com/Attraction_Review-g45963-d34750297-Reviews-City_Clue-Las_Vegas_Nevada.html"
+            ]
           },
           {
             "@type": "TouristTrip",
             "@id": "https://cityclue.site/#trip",
             "name": "City Clue: Las Vegas Strip Self-Guided Walking Game",
+            "alternateName": [
+              "City Clue",
+              "City Clue Las Vegas",
+              "City Clue Las Vegas Strip Self Guided Walking Game for Adults",
+              "Discover the Strip"
+            ],
             "description": "A 21+ self-guided walking game on the Las Vegas Strip by Rift Studios. It starts at The Cosmopolitan of Las Vegas. 13 checkpoints. About 1 hr 30 min and about 2.7 mi / 4.3 km.",
             "touristType": "Adults 21+",
             "url": "https://cityclue.site/",
             "image": "https://cityclue.site/img/hero/hero-desktop-1440.jpg",
-            "provider": { "@id": "https://cityclue.site/#org" },
+            "sameAs": [
+              "https://www.tripadvisor.com/Attraction_Review-g45963-d34750297-Reviews-City_Clue-Las_Vegas_Nevada.html"
+            ],
+            "provider": {
+              "@id": "https://cityclue.site/#org"
+            },
             "tripOrigin": {
               "@type": "Place",
               "name": "The Cosmopolitan of Las Vegas",
@@ -88,7 +106,9 @@
               "availability": "https://schema.org/InStock",
               "url": "https://cityclue.site/#book-calendar",
               "description": "Per player.",
-              "seller": { "@id": "https://cityclue.site/#org" },
+              "seller": {
+                "@id": "https://cityclue.site/#org"
+              },
               "priceSpecification": {
                 "@type": "UnitPriceSpecification",
                 "price": "14.99",
@@ -111,13 +131,54 @@
           },
           {
             "@type": "FAQPage",
+            "@id": "https://cityclue.site/#faq",
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Is it really 21+?",
+                "name": "Is City Clue a scavenger hunt?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. The game leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older."
+                  "text": "Yes. City Clue is a scavenger-hunt-style walking game on the Las Vegas Strip. You walk 13 stops and score points by hunting for details, matching pictures and answering trivia. It's self-guided, not a live guided tour and not an escape room."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does City Clue take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "About 2.7 miles (4.3 km), about 90 minutes, self-guided, with 13 stops."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where does City Clue start and end?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "It starts outside The Cosmopolitan's main Strip entrance, 3708 S Las Vegas Blvd, Las Vegas. It finishes on a pedestrian bridge nearby, with The Cosmopolitan in sight."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need to download an app to play City Clue?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. There's no app-store download. City Clue plays in your phone's browser from the link in your access-code email. You'll need data, location services, and a charged battery."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is City Clue 21+?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. The game leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older. Drinks and gambling are optional and not included."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How much does City Clue cost?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "$14.99 per player. Each player needs their own ticket and gets their own access code. You can cancel a City Clue ticket for a full refund up to 24 hours before the date you chose, as long as the ticket has not been used. Access codes do not expire."
                 }
               },
               {
@@ -138,34 +199,10 @@
               },
               {
                 "@type": "Question",
-                "name": "How long does it take?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "About 2.7 miles (4.3 km), about 90 minutes, self-guided."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Where does it start and end?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Start at The Cosmopolitan's main Strip entrance (3708 S Las Vegas Blvd). Finish on a pedestrian bridge nearby."
-                }
-              },
-              {
-                "@type": "Question",
                 "name": "Can we play as a group?",
                 "acceptedAnswer": {
                   "@type": "Answer",
                   "text": "Yes. Play solo or as a team. Each player needs their own ticket."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Do I need to download anything?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "No app-store download. It plays in your phone's browser. You'll need data, location services, and a charged battery."
                 }
               },
               {
@@ -181,7 +218,7 @@
                 "name": "What's the cancellation policy?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Free cancellation up to 24 hours before your chosen date for a full refund, as long as the ticket hasn't been used. Email support@riftstudios.ai with your booking reference. Marketplace bookings (for example, Viator) follow that marketplace's policy."
+                  "text": "Free cancellation up to 24 hours before your chosen date for a full refund, as long as the ticket hasn't been used. Email support@riftstudios.ai with your booking reference. Marketplace bookings (for example, Viator) follow that marketplace's policy. Read the cancellation policy"
                 }
               },
               {
@@ -262,6 +299,84 @@
             <a class="btn-primary" data-cta="hero" href="#book-calendar"><svg class="icon" aria-hidden="true"><use href="#i-ticket"></use></svg>Book now · $14.99 per player</a>
             <p class="micro">Free cancellation up to 24 hours before the date you chose · Access code by email · Pick any day, start any time</p>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="what-is-city-clue" aria-labelledby="what-is-title">
+        <div class="wrap">
+          <h2 id="what-is-title">What is City Clue?</h2>
+          <p class="lede"><strong>City Clue is a self-guided walking game for adults 21+ on the Las Vegas Strip, played on your phone, for $14.99 per player.</strong> Your in-app host Bruce guides you through 13 stops from The Cosmopolitan in about 90 minutes (about 2.7 miles (4.3 km)), with clues, trivia and picture challenges for points.</p>
+          <p>City Clue is made by Rift Studios, a DBA of Arcade of Satoshi LLC.</p>
+
+          <h3>How City Clue works</h3>
+          <ol>
+            <li><strong>Book your players.</strong> Pick a date and how many people are playing. Each player needs their own $14.99 ticket.</li>
+            <li><strong>Get your access codes by email.</strong> Every player gets a personal access code right after booking. The email has the link to start.</li>
+            <li><strong>Start at The Cosmopolitan.</strong> On your date, start any time outside The Cosmopolitan's main Strip entrance (3708 S Las Vegas Blvd). A live map on your phone guides you stop to stop. You finish on a pedestrian bridge with The Cosmopolitan in sight.</li>
+          </ol>
+
+          <h3>What's included</h3>
+          <ul>
+            <li>13 stops on the Strip's most famous stretch, including The Cosmopolitan, Paris Las Vegas &amp; the Eiffel Tower, Grand Bazaar Shops, the Caesars Palace area, the former Mirage site (future Hard Rock), The Venetian, The LINQ Promenade, the High Roller and the Flamingo</li>
+            <li>Challenges at every stop: hunt for details, match the picture, true or false, odd one out and rapid trivia</li>
+            <li>Stories between stops: Vegas history, mob lore, celebrity gossip and strange facts</li>
+            <li>Points for every answer, plus hints if you're stuck (they cost you)</li>
+            <li>A personal access code for each player. It plays in your phone's browser, with no app-store download.</li>
+            <li>Free cancellation up to 24 hours before your chosen date, if the ticket hasn't been used. Access codes do not expire.</li>
+          </ul>
+          <p>Not included: drinks, gambling, show tickets, meals, transportation or casino entry. You don't have to drink or gamble.</p>
+
+          <h3>Who City Clue is for</h3>
+          <ul>
+            <li>Adults 21+ who want a ready-made plan for a group night, a bachelor/ette weekend, a date or a solo wander</li>
+            <li>Visitors who want to see the Strip on their own schedule: pick any day, start any time, at their own pace</li>
+            <li>Groups who like a bit of competition: play solo or as a team</li>
+          </ul>
+
+          <h3>Who it's not for</h3>
+          <ul>
+            <li>Anyone under 21. Every player must be 21 or older.</li>
+            <li>People who want a live, in-person tour guide. Bruce is an in-app host. It is not a live guided tour.</li>
+            <li>Anyone looking for Downtown Las Vegas or Fremont Street. City Clue is on the Strip.</li>
+            <li>Anyone who needs a certified wheelchair-accessible route. The route is mostly flat sidewalks and pedestrian bridges with elevators or escalators at major crossings, but it hasn't been certified as wheelchair accessible.</li>
+          </ul>
+
+          <h3>How is City Clue different from other Las Vegas scavenger hunts?</h3>
+          <ul>
+            <li><strong>It's on the Las Vegas Strip, not Downtown or Fremont Street.</strong> It starts at The Cosmopolitan (3708 S Las Vegas Blvd).</li>
+            <li><strong>It's not an escape room.</strong> It's a walking game with stops, challenges and points. A couple of stops are inside public areas of casinos, hotels and shops.</li>
+            <li><strong>It's not Escapely or Operation City Quest.</strong> City Clue is a separate game from Rift Studios, with its own route, price ($14.99 per player) and booking at cityclue.site.</li>
+            <li><strong>Compared with app hunts like Questo and Let's Roam:</strong> City Clue is the same self-guided, play-at-your-pace idea, with these specifics: one Strip route with 13 stops, about 2.7 miles (4.3 km), about 90 minutes, self-guided, a comedian host character (Bruce), adults 21+ only, and it plays in your phone's browser with no app-store download.</li>
+          </ul>
+
+          <h3>City Clue FAQ</h3>
+          <div class="faq-list">
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-1" aria-expanded="false" aria-controls="what-faq-panel-1"><span>Is City Clue a scavenger hunt?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-1" role="region" aria-labelledby="what-faq-1" hidden><p>Yes. City Clue is a scavenger-hunt-style walking game on the Las Vegas Strip. You walk 13 stops and score points by hunting for details, matching pictures and answering trivia. It's self-guided, not a live guided tour and not an escape room.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-2" aria-expanded="false" aria-controls="what-faq-panel-2"><span>How long does City Clue take?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-2" role="region" aria-labelledby="what-faq-2" hidden><p>About 2.7 miles (4.3 km), about 90 minutes, self-guided, with 13 stops.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-3" aria-expanded="false" aria-controls="what-faq-panel-3"><span>Where does City Clue start and end?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-3" role="region" aria-labelledby="what-faq-3" hidden><p>It starts outside The Cosmopolitan's main Strip entrance, 3708 S Las Vegas Blvd, Las Vegas. It finishes on a pedestrian bridge nearby, with The Cosmopolitan in sight.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-4" aria-expanded="false" aria-controls="what-faq-panel-4"><span>Do I need to download an app to play City Clue?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-4" role="region" aria-labelledby="what-faq-4" hidden><p>No. There's no app-store download. City Clue plays in your phone's browser from the link in your access-code email. You'll need data, location services, and a charged battery.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-5" aria-expanded="false" aria-controls="what-faq-panel-5"><span>Is City Clue 21+?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-5" role="region" aria-labelledby="what-faq-5" hidden><p>Yes. The game leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older. Drinks and gambling are optional and not included.</p></div>
+            </div>
+            <div class="faq-item">
+              <h3><button type="button" id="what-faq-6" aria-expanded="false" aria-controls="what-faq-panel-6"><span>How much does City Clue cost?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
+              <div id="what-faq-panel-6" role="region" aria-labelledby="what-faq-6" hidden><p>$14.99 per player. Each player needs their own ticket and gets their own access code. You can cancel a City Clue ticket for a full refund up to 24 hours before the date you chose, as long as the ticket has not been used. Access codes do not expire.</p></div>
+            </div>
+          </div>
+          <p><a href="#book-calendar" data-cta="features">Book City Clue: $14.99 per player</a> · Questions: <a data-track="support_email_click" href="mailto:support@riftstudios.ai">support@riftstudios.ai</a></p>
         </div>
       </section>
 
@@ -520,10 +635,6 @@
           <h2 id="faq-title">Before you book.</h2>
           <div class="faq-list">
             <div class="faq-item">
-              <h3><button type="button" id="faq-button-1" aria-expanded="false" aria-controls="faq-panel-1"><span>Is it really 21+?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
-              <div id="faq-panel-1" role="region" aria-labelledby="faq-button-1" hidden><p>Yes. The game leans into casinos, cocktails and Strip nightlife, so every player must be 21 or older.</p></div>
-            </div>
-            <div class="faq-item">
               <h3><button type="button" id="faq-button-2" aria-expanded="false" aria-controls="faq-panel-2"><span>Do we have to drink or gamble?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
               <div id="faq-panel-2" role="region" aria-labelledby="faq-button-2" hidden><p>No. You'll walk past bars and casinos, but drinks and gambling are optional and not included.</p></div>
             </div>
@@ -532,20 +643,8 @@
               <div id="faq-panel-3" role="region" aria-labelledby="faq-button-3" hidden><p>On the date you pick, start whenever you want. There's no set start time.</p></div>
             </div>
             <div class="faq-item">
-              <h3><button type="button" id="faq-button-4" aria-expanded="false" aria-controls="faq-panel-4"><span>How long does it take?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
-              <div id="faq-panel-4" role="region" aria-labelledby="faq-button-4" hidden><p>About 2.7 miles (4.3 km), about 90 minutes, self-guided.</p></div>
-            </div>
-            <div class="faq-item">
-              <h3><button type="button" id="faq-button-5" aria-expanded="false" aria-controls="faq-panel-5"><span>Where does it start and end?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
-              <div id="faq-panel-5" role="region" aria-labelledby="faq-button-5" hidden><p>Start at The Cosmopolitan's main Strip entrance (3708 S Las Vegas Blvd). Finish on a pedestrian bridge nearby.</p></div>
-            </div>
-            <div class="faq-item">
               <h3><button type="button" id="faq-button-6" aria-expanded="false" aria-controls="faq-panel-6"><span>Can we play as a group?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
               <div id="faq-panel-6" role="region" aria-labelledby="faq-button-6" hidden><p>Yes. Play solo or as a team. Each player needs their own ticket.</p></div>
-            </div>
-            <div class="faq-item">
-              <h3><button type="button" id="faq-button-7" aria-expanded="false" aria-controls="faq-panel-7"><span>Do I need to download anything?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
-              <div id="faq-panel-7" role="region" aria-labelledby="faq-button-7" hidden><p>No app-store download. It plays in your phone's browser. You'll need data, location services, and a charged battery.</p></div>
             </div>
             <div class="faq-item">
               <h3><button type="button" id="faq-button-8" aria-expanded="false" aria-controls="faq-panel-8"><span>How do I get my access code?</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button></h3>
