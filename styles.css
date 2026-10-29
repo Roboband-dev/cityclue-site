@@ -1441,6 +1441,38 @@ div:has(> iframe[src*="CartBubble"]) {
 .sheet-inner li { color: var(--cc-muted); max-width: 62ch; }
 .sheet-inner p + p { margin-top: 12px; }
 
+.guide h3 { font-size: 18px; margin: 18px 0 6px; }
+.guide .crumbs { margin-bottom: 8px; }
+.guide .cta-row { margin-top: 20px; }
+.guide .compare-hint { display: none; font-size: 14px; }
+.guide .compare-wrap {
+  overflow-x: auto;
+  margin: 16px 0 8px;
+  max-width: none;
+}
+@media (max-width: 759px) {
+  .guide .compare-hint { display: block; }
+}
+.guide table.compare {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.guide table.compare th,
+.guide table.compare td {
+  border-bottom: 1px solid var(--cc-line);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  color: var(--cc-muted);
+}
+.guide table.compare th {
+  color: var(--cc-text);
+  font-weight: 600;
+}
+
 .missing {
   padding: calc(var(--header) + 56px) 0 96px;
 }
